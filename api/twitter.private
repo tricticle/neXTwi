@@ -1,0 +1,259 @@
+// api/twitter.js
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const profileSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  updated_at: { type: Date, required: true },
+  username: { type: String, minLength: 3,required: true },
+  full_name: { type: String },
+});
+
+const tweetSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  text: { type: String, required: true },
+  profile_id: { type: mongoose.Schema.Types.UUID, required: true },
+  created_at: { type: Date, required: true },
+  updated_at: { type: Date, required: true },
+});
+
+const hashtagSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  name: { type: String, required: true },
+});
+
+const tweetHashtagSchema = new mongoose.Schema({
+  tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
+  hashtag_id: { type: mongoose.Schema.Types.UUID, required: true },
+});
+
+const replySchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  text: { type: String, required: true },
+  user_id: { type: mongoose.Schema.Types.UUID, required: true },
+  tweet_id: { type: mongoose.Schema.Types.UUID },
+  reply_id: { type: mongoose.Schema.Types.UUID },
+});
+
+const likeSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  user_id: { type: mongoose.Schema.Types.UUID, required: true },
+  tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
+  created_at: { type: Date, required: true },
+});
+
+const bookmarkSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  user_id: { type: mongoose.Schema.Types.UUID },
+  tweet_id: { type: mongoose.Schema.Types.UUID },
+  created_at: { type: Date, required: true },
+});
+
+const Profile = mongoose.model('Profile', profileSchema);
+const Tweet = mongoose.model('Tweet', tweetSchema);
+const Hashtag = mongoose.model('Hashtag', hashtagSchema);
+const TweetHashtag = mongoose.model('TweetHashtag', tweetHashtagSchema);
+const Reply = mongoose.model('Reply', replySchema);
+const Like = mongoose.model('Like', likeSchema);
+const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      // If it's a POST request, add a new profile
+      const { username, full_name } = req.body;
+
+      const profile = new Profile({
+        _id: new mongoose.Types.UUID(),
+        updated_at: new Date(),
+        username,
+        full_name,
+      });
+
+      await profile.save();
+
+      res.status(201).json({ message: 'Profile added successfully' });
+    } else {
+      // If it's a GET request, fetch all profiles
+      const profiles = await Profile.find();
+      res.json(profiles);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      // If it's a POST request, add a new profile
+      const { username, full_name } = req.body;
+
+      const profile = new Profile({
+        _id: new mongoose.Types.UUID(),
+        updated_at: new Date(),
+        username,
+        full_name,
+      });
+
+      await profile.save();
+
+      res.status(201).json({ message: 'Profile added successfully' });
+    } else {
+      // If it's a GET request, fetch all profiles
+      const profiles = await Profile.find();
+      res.json(profiles);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      const { text, profile_id } = req.body;
+      const tweet = new Tweet({
+        _id: new mongoose.Types.UUID(),
+        text,
+        profile_id,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+      await tweet.save();
+      res.status(201).json({ message: 'Tweet added successfully' });
+    } else if (req.method === 'GET') {
+      const tweets = await Tweet.find();
+      res.json(tweets);
+    } else {
+      res.status(400).json({ error: 'Invalid request method' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      const { name } = req.body;
+      const hashtag = new Hashtag({
+        _id: new mongoose.Types.UUID(),
+        name,
+      });
+      await hashtag.save();
+      res.status(201).json({ message: 'Hashtag added successfully' });
+    } else if (req.method === 'GET') {
+      const hashtags = await Hashtag.find();
+      res.json(hashtags);
+    } else {
+      res.status(400).json({ error: 'Invalid request method' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      // Handle adding data for tweetHashtags
+      const { tweet_id, hashtag_id } = req.body;
+      const tweetHashtag = new TweetHashtag({
+        tweet_id,
+        hashtag_id,
+      });
+      await tweetHashtag.save();
+      res.status(201).json({ message: 'TweetHashtag added successfully' });
+    } else if (req.method === 'GET') {
+      const tweethashtags = await TweetHashtag.find();
+      res.json(tweethashtags);
+    } else {
+      res.status(400).json({ error: 'Invalid request method' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      const { text, user_id, tweet_id, reply_id } = req.body;
+      const reply = new Reply({
+        _id: new mongoose.Types.UUID(),
+        text,
+        user_id,
+        tweet_id,
+        reply_id,
+      });
+      await reply.save();
+      res.status(201).json({ message: 'Reply added successfully' });
+    } else if (req.method === 'GET') {
+      const replies = await Reply.find();
+      res.json(replies);
+    } else {
+      res.status(400).json({ error: 'Invalid request method' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      const { user_id, tweet_id } = req.body;
+      const like = new Like({
+        _id: new mongoose.Types.UUID(),
+        user_id,
+        tweet_id,
+        created_at: new Date(),
+      });
+      await like.save();
+      res.status(201).json({ message: 'Like added successfully' });
+    } else if (req.method === 'GET') {
+      const likes = await Like.find();
+      res.json(likes);
+    } else {
+      res.status(400).json({ error: 'Invalid request method' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = async (req, res) => {
+  try {
+    if (req.method === 'POST') {
+      const { user_id, tweet_id } = req.body;
+      const bookmark = new Bookmark({
+        _id: new mongoose.Types.UUID(),
+        user_id,
+        tweet_id,
+        created_at: new Date(),
+      });
+      await bookmark.save();
+      res.status(201).json({ message: 'Bookmark added successfully' });
+    } else if (req.method === 'GET') {
+      const bookmarks = await Bookmark.find();
+      res.json(bookmarks);
+    } else {
+      res.status(400).json({ error: 'Invalid request method' });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

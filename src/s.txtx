@@ -18,47 +18,7 @@ function App() {
   const [useLocation, setUseLocation] = useState(false);
   const [adminData, setAdminData] = useState(null);
   const [showOptions, setShowOptions] = useState(null);
-  const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
-  
-  const toggleTweetPost = () => {
-    setIsTweetPostVisible(!isTweetPostVisible);
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMenuOpen && !event.target.closest('.menu-btn')) {
-        closeMenu();
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isMenuOpen) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isMenuOpen]);
+  const [selectedReplyId, setSelectedReplyId] = useState(null);
 
   const handleLike = async (tweetId) => {
     try {
@@ -154,6 +114,14 @@ function App() {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   const toggleOptions = (tweetId) => {
@@ -277,20 +245,10 @@ function App() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
         const tweets = await response.json();
-  
-        // Fetch profile information for each tweet
-        const tweetsWithProfile = await Promise.all(
-          tweets.map(async (tweet) => {
-            const profileResponse = await fetch(`/api/profile?id=${tweet.profile_id}`);
-            const profileData = await profileResponse.json();
-            return { ...tweet, avatar: profileData.avatar, username: profileData.username };
-          })
-        );
-  
-        setTweets(tweetsWithProfile);
+        setTweets(tweets);
       } else {
         console.error('Failed to fetch tweets');
       }
@@ -298,7 +256,6 @@ function App() {
       console.error('Error:', error);
     }
   };
-  
 
   const postReply = async (tweetId) => {
     try {
@@ -337,17 +294,8 @@ function App() {
 
       if (response.ok) {
         const replies = await response.json();
-
-        // Fetch profile information for each reply
-        const repliesWithProfile = await Promise.all(
-          replies.map(async (reply) => {
-            const profileResponse = await fetch(`/api/profile?id=${reply.user_id}`);
-            const profileData = await profileResponse.json();
-            return { ...reply, avatar: profileData.avatar, username: profileData.username };
-          })
-        );
-
-        setRepliesTweets(repliesWithProfile);
+        setRepliesTweets(replies);
+        console.log('Replies:', replies);
       } else {
         console.error('Failed to fetch replies');
       }
@@ -399,6 +347,22 @@ function App() {
       console.error('Error:', error);
     }
   };
+  
+
+  useEffect(() => {
+    handleProfile();
+    const handleClickOutside = (event) => {
+      if (isMenuOpen && !event.target.closest('.menu-btn')) {
+        closeMenu();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -412,7 +376,6 @@ function App() {
 
   return (
     <div>
-    <section className="wrapper">
       <header className="header">
         <h1>twitter</h1>
         <div className="menu-btn">
@@ -460,51 +423,35 @@ function App() {
           </div>
         </div>
       </header>
-      </section>
-      <div className="adjust">
       <div className="container">
         <div className="post-section">
           <h2>Tweets</h2>
           <div className="tweet-grid">
   {tweets.map((tweet) => (
     <div className="tweet" key={tweet._id}>
-      <div className="opos">
-      <div className="avatar">
-      {tweet.avatar && <img src={tweet.avatar} alt={`${tweet.profile_id} Avatar`} />}
-      <div className="user-info">
-      <h3>{tweet.username}</h3>
-      {tweet.location && tweet.location.placeName && (
-        <h6>&nbsp;&nbsp;,<i class="fa-solid fa-location-dot"></i>{tweet.location.placeName}</h6>
-      )}
-      </div>
-    </div>
       <div className="options">
         <i className="fa-solid fa-ellipsis-vertical" onClick={() => toggleOptions(tweet._id)}></i>
         {showOptions === tweet._id && (
           <div className="options-menu">
             {profileData?._id !== tweet.profile_id && (
-              <button className="opb" onClick={() => handleBookmark(tweet._id)}>
-                <i class="fa-regular fa-bookmark"></i>
-                {bookmarkedTweets.includes(tweet._id) ? 'remove' : 'Bookmark'}
+              <button onClick={() => handleBookmark(tweet._id)}>
+                {bookmarkedTweets.includes(tweet._id) ? 'Unbookmark' : 'Bookmark'}
               </button>
             )}
             {profileData?._id === tweet.profile_id && (
-              <button className="opb" onClick={() => handleDeleteTweet(tweet._id)}>
-                <i class="fa-regular fa-trash-can"></i>Delete
+              <button onClick={() => handleDeleteTweet(tweet._id)}>
+                Delete
               </button>
             )}
           </div>
         )}
       </div>
-      </div>
-      <div className="tweet-area">
       {tweet.hashtags && (
       <p>{tweet.hashtags.map((tag, index) => (
         <span key={index} className="hashtag"> #{tag}</span>
       ))}</p>
     )}
-      <h5>{tweet.text}</h5>
-      </div>
+      <h1>{tweet.text}</h1>
       <div className="button-group">
               {selectedTweetId === tweet._id ? (
                 <>
@@ -523,62 +470,54 @@ function App() {
                   Reply
                 </button>
               )}
-<button
-  className={likedTweets.includes(tweet._id) ? "liked" : ""}
-  onClick={() => handleLike(tweet._id)}
->
-<i className="fas fa-heart"></i>
-</button>
-</div>
-{repliesTweets.map((reply) => {
-  if (reply.tweet_id === tweet._id) {
-    return (
-      <div className="replies" key={reply._id}>
-        <div className="user-info">
-        <img className="avatar" src={reply.avatar} alt={`${reply.user_id} Avatar`} />
-        <h3>{reply.username}</h3>
-        </div>
-        <div className="reptext">
-        <p>{reply.text}</p>
-        </div>
-      </div>
-    );
-  }
-  return null;
-})}
-</div>
+              <button onClick={() => handleLike(tweet._id)}>
+                {likedTweets.includes(tweet._id) ? 'Unlike' : 'Like'}
+              </button>
+            </div>
+      {tweet.location && tweet.location.placeName && (
+        <p>Location: {tweet.location.placeName}</p>
+      )}
+      {repliesTweets.map((reply) => {
+        if (reply.tweet_id === tweet._id) {
+          return (
+            <div key={reply._id}>
+              <span>Replied by {reply.user_id}</span>
+              <p>{reply.text}</p>
+              <button onClick={() => setSelectedTweetId(reply.tweet_id)}>
+                Reply to this reply
+              </button>
+            </div>
+          );
+        }
+        return null;
+      })}
+    </div>
   ))}
 </div>
         </div>
       </div>
       <div className="pos">
-          <button className="post-btn" onClick={toggleTweetPost}>
-          <i class="fa-regular fa-pen-to-square"></i>
-          </button>
-          {isTweetPostVisible && (
-            <div className="tweet-post">
-              <textarea
-                placeholder="What's happening?"
-                value={tweetText}
-                onChange={(e) => setTweetText(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Add hashtags"
-                value={hashtags}
-                onChange={(e) => setHashtags(e.target.value)}
-              />
-              <div className="location">
-                <input
-                  type="checkbox"
-                  checked={useLocation}
-                  onChange={() => setUseLocation(!useLocation)}
-                />
-                location
-              </div>
-              <button onClick={postTweet}>Tweet</button>
-            </div>
-          )}
+        <div className="tweet-post">
+          <textarea
+            placeholder="What's happening?"
+            value={tweetText}
+            onChange={(e) => setTweetText(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Add hashtags (comma or space separated)"
+            value={hashtags}
+            onChange={(e) => setHashtags(e.target.value)}
+          />
+          <label>
+            <input
+              type="checkbox"
+              checked={useLocation}
+              onChange={() => setUseLocation(!useLocation)}
+            />
+            Include my location
+          </label>
+          <button onClick={postTweet}>Tweet</button>
         </div>
       </div>
     </div>

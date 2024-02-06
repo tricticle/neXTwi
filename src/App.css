@@ -1,38 +1,617 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+:root {
+  --tran: 0.7s ease;
+  --primary-color: #ff7070;
+  --secondary-color: #50b9ff;
+  --background-color: #ffffff;
+  --text-color: #000000;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+@keyframes color {
+  0% {
+    color: #ffbdbd;
+  }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+  20% {
+    color: #b882ff;
+  }
+
+  40% {
+    color: #ff4f4f;
+  }
+
+  60% {
+    color: #ff4f4f;
+  }
+
+  80% {
+    color: #b882ff;
+  }
+
+  100% {
+    color: #ffbebe;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+@keyframes bgcolor {
+  0% {
+    background-color: #ffbdbd;
+  }
+
+  20% {
+    background-color: #b882ff;
+  }
+
+  40% {
+    background-color: #50b9ff;
+  }
+
+  60% {
+    background-color: #50b9ff;
+  }
+
+  80% {
+    background-color: #d08dff;
+  }
+
+  100% {
+    background-color: #ffbebe;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(30deg);
+  }
+  50% {
+    transform: rotate(0deg);
+    transform:scale(70%);
+  }
+  80% {
+    transform: rotate(-30deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', cursive;
+  text-transform: capitalize;
+  --tran: all 0.5s ease;
+  color: dark light;
+  text-wrap: balance;
+}
+.wrap-ins{
+  display: flex;
+  background-color: #ff4f4f;
+}
+
+body {
+  font-family: 'Poppins', cursive;
+  scroll-behavior: smooth;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+  color: transparent;
+}
+
+.wrapper{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(70px);
+  border-radius:7px;
+}
+
+@keyframes move{  
+  0% {
+    background-position: 36% 42%;
+    background-size: 200%;
+  }
+  
+  20% {
+    background-position: 30% 35%;
+    background-size: 300%;
+  }
+  
+  20.0001% { /* -- View 2 -- */
+    background-position: 60% 85%;
+    background-size: 400%;
+  }
+  
+  40% {
+    background-position: 49% 81%;
+    background-size: 350%;
+  }
+  
+  40.0001% { /* -- View 3 -- */
+    background-position: 80% 42%;
+    background-size: 300%;
+  }
+  
+  60% {
+    background-position: 84% 33%;
+    background-size: 250%;
+  }
+  
+  60.0001% { /* -- View 4 -- */
+    background-position: 0% 0%;
+    background-size: 300%;
+  }
+  
+  80% {
+    background-position: 15% 4%;
+    background-size: 350%;
+  }
+  
+  80.0001% { /* -- View 5 -- */
+    background-position: 80% 10%;
+    background-size: 400%;
+  }
+  
+  100% {
+    background-position: 72% 14%;
+    background-size: 300%;
+  }
+}
+
+.header {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.199);
+  background-repeat: none;
+  object-fit: cover;
+  flex-direction: row;
+  margin: 10px;
+  z-index: 99;
+  animation: move 69s infinite;
+}
+.header h1{
+    font-family: 'Poppins', sans-serif;
+    font-size: inherit;
+    text-transform: lowercase;
+    transition: var(--tran);
+}
+
+.header:hover h1{
+  color: var(--background-color);
+  transition: var(--tran);
+}
+
+.menu-btn button {
+  display: flex;
+  font-family: 'Poppins', sans-serif;
+  transition: var(--tran);
+  outline: transparent;
+  border: none;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  color: var(--background-color);
+  font-size: 11px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  margin: 3px;
+  padding: 5px;
+}
+
+.dropdown {
+  display: flex;
+  display: none;
+}
+
+.dropdown.open {
+  display: flex;
+  position: absolute;
+  top: 79px;
+  right: 10px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.247);
+  padding: 10px;
+  z-index: 1;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  gap: 2px;
+  }
+
+.menu-btn button:hover {
+  transition: var(--tran);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  border: 3px;
+}
+
+.header:hover {
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+}
+
+
+.profile img {
+  padding: 3px;
+  aspect-ratio: 1/1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profile h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+}
+
+.link a{
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  animation: color 15s infinite;
+}
+
+.tweet-details p{
+  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px;
+  animation: color 15s infinite;
+}
+.adjust{
+  margin-top: 77px;
+  margin-bottom: 77px;
+}
+
+.container {
+  padding: 7px;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.tweet-grid {
+  display: grid;
+  width: 99%;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 20px;
+  justify-items: center;
+  padding: 5px;
+  align-content: center;
+  align-items: start;
+}
+
+.tweet {
+  position: relative;
+  display: flex;
+  width: 100%;
+  border-radius: 7px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.111);
+  overflow: hidden;
+  transition: var(--tran);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tweet:hover{
+  transition: var(--tran);
+  box-shadow: 0px 4px 10px hsla(0, 0%, 0%, 0.499);
+}
+
+.tweet:hover img{
+  transition: var(--tran);
+  padding: 7px;
+  border-radius: 17px;
+}
+
+.avatar{
+  display: flex;
+  align-items: center;
+}
+
+.user-info{
+  display: flex;
+  align-items: center;
+}
+
+.user-info h3, h6{
+font-size: 11px;
+}
+.tweet img {
+  display: flex;
+  transition: var(--tran);
+  min-height: 40px;
+  width: 40px;
+  height: auto;
+  object-fit:cover;
+  border-radius: 110px;
+  padding: 5px;
+}
+.opos{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+.opos .loc p{
+  display: flex;
+  background-color: var(--secondary-color);
+  padding: 3px 7px;
+  border-radius: 70px;
+  font-size: 13px;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-wrap: wrap;
 }
 
-.App-link {
-  color: #61dafb;
+.replies{
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  text-wrap: balance;
+  flex-direction: column;
+  align-content: flex-start;
+  padding: 10px;
+  background-color: rgb(238, 238, 238);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.replies .user-info{
+  position: relative;
+  top: 21;
+}
+
+.replies .user-info h3{
+  display: none;
+  transition: var(--tran);
+}
+.replies:hover .user-info h3{
+  display: block;
+  transition: var(--tran);
+  background-color: var(--text-color);
+  color: var(--background-color);
+  border-radius: 90px;
+  padding: 5px 20px;
+  margin: 0px 20px 5px 0px;
+}
+
+.replies p{
+  font-size: 12px;
+  font-weight: 700;
+  background-color: var(--background-color);
+  padding: 17px;
+  border-radius: 7px;
+}
+.opos .loc i{
+  color: var(--background-color);
+  font-size: 9px;
+}
+
+.options-menu{
+  position: absolute;
+  top: 35px;
+  right: 10;
+  background-color: var(--background-color);
+  display: flex;
+  padding: 7px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 10px hsla(0, 0%, 0%, 0.499);
+}
+
+.options-menu .opb{
+  color: var(--background-color);
+  background-color: var(--text-color);
+}
+
+.button-group {
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  margin-block: 7px;
+  transition: var(--tran);
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.tweet-area{
+  height: 100%;
+  width: 100%;
+  text-wrap:auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding: 20px;
+  font-family: 'Unica One', cursive;
+}
+
+.tweet-details {
+  margin-left:10px ;
+  text-overflow:inherit;
+  flex-grow: 1;
+  color: var(--text-color);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+  padding: 5px;
+  border-radius: 7px;
+  transition: var(--tran);
+}
+
+.tweet-details h3 {
+  font-size: calc(30% + 9px);
+  margin: 0;
+}
+
+.button-group button.liked {
+  border-radius: 200%;
+  transition: var(--tran);
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  box-shadow: 0px 4px 10px hsla(0, 0%, 0%, 0.17);
+}
+
+i{
+  border-radius: 2px;
+  padding: 5px;
+  font-size: 10px;
+}
+
+.fa-trash{
+  color: var(--primary-color);
+  animation: shake 0.5s infinite;
+}
+
+.hashtag {
+  color: #007bff; /* Set your desired color for hashtags */
+  cursor: pointer;
+}
+
+
+.post-section{
+ text-align: center;
+ margin: 3px;
+}
+
+.tweet button {
+  transition: var(--tran);
+  display: flex;
+  margin: 10px;
+  padding: 5px;
+  background-color: hsla(0, 0%, 0%, 0);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+input[type="text"] {
+  transition: var(--tran);
+  padding: 5px;
+  outline: transparent;
+  border: transparent;
+  border-radius: 3px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  text-align: center;
+  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--primary-color);
+  border-radius: 30px;
+  transition: var(--tran);
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+}
+
+.pos{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tweet-post{
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--background-color);
+  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  padding: 10px;
+  bottom: 0;
+  gap: 10px;
+  border-radius: 7px;
+}
+
+.tweet-post textarea{
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 70px;
+  text-wrap: wrap;
+  border-radius: 7px;
+  border: none;
+  outline: none;
+  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
+  resize: none;
+}
+
+.tweet-post .location{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tweet-post button{
+  background-color: var(--secondary-color);
+  border: none;
+  padding: 4px 10px;
+  border-radius: 70px;
+  color: var(--background-color);
+}
+
+.post-btn{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: var(--secondary-color);
+  border: none;
+  padding: 15px;
+  border-radius: 70px;
+  margin: 20px;
+}
+.post-btn i{
+  font-size: 17px;
 }

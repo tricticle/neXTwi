@@ -116,45 +116,54 @@ function App() {
 
   const fetchLikes = async () => {
     try {
-      const response = await fetch('/api/like', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const likes = await response.json();
-        setLikedTweets(likes.map(like => like.tweet_id));
-        console.log('Likes:', likes);
+      if (profileData) {
+        const response = await fetch(`/api/like?user_id=${profileData._id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (response.ok) {
+          const likes = await response.json();
+          setLikedTweets(likes.map(like => like.tweet_id));
+          console.log('Likes:', likes);
+        } else {
+          console.error('Failed to fetch likes');
+        }
       } else {
-        console.error('Failed to fetch likes');
+        console.error('Profile data is not available');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
+  
   const fetchBookmarks = async () => {
     try {
-      const response = await fetch('/api/bookmark', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const bookmarks = await response.json();
-        setBookmarkedTweets(bookmarks.map(bookmark => bookmark.tweet_id));
-        console.log('Bookmarks:', bookmarks);
+      if (profileData) {
+        const response = await fetch(`/api/bookmark?user_id=${profileData._id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (response.ok) {
+          const bookmarks = await response.json();
+          setBookmarkedTweets(bookmarks.map(bookmark => bookmark.tweet_id));
+          console.log('Bookmarks:', bookmarks);
+        } else {
+          console.error('Failed to fetch bookmarks');
+        }
       } else {
-        console.error('Failed to fetch bookmarks');
+        console.error('Profile data is not available');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
+  
 
   const toggleOptions = (tweetId) => {
     setShowOptions((prevTweetId) => (prevTweetId === tweetId ? null : tweetId));

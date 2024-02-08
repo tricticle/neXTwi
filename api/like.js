@@ -28,13 +28,26 @@ module.exports = async (req, res) => {
       await like.save();
       res.status(201).json({ message: 'Like added successfully' });
     } else if (req.method === 'GET') {
-      const likes = await Like.find().lean(); // Use .lean() to convert to plain JavaScript objects
-      const stringifiedLikes = likes.map(like => ({
-        ...like,
-        user_id: like.user_id.toString(),
-        tweet_id: like.tweet_id.toString(),
-      }));
-      res.json(stringifiedLikes);
+      const { user_id } = req.query; // Retrieve user_id from query parameters
+      if (user_id) {
+        // If user_id is provided, fetch likes only for that user
+        const likes = await Like.find({ user_id }).lean();
+        const stringifiedLikes = likes.map(like => ({
+          ...like,
+          user_id: like.user_id.toString(),
+          tweet_id: like.tweet_id.toString(),
+        }));
+        res.json(stringifiedLikes);
+      } else {
+        // If user_id is not provided, fetch all likes
+        const likes = await Like.find().lean();
+        const stringifiedLikes = likes.map(like => ({
+          ...like,
+          user_id: like.user_id.toString(),
+          tweet_id: like.tweet_id.toString(),
+        }));
+        res.json(stringifiedLikes);
+      }
     } else if (req.method === 'DELETE') {
       const { user_id, tweet_id } = req.body;
       await Like.findOneAndDelete({ user_id, tweet_id });

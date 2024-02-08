@@ -409,15 +409,20 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      addProfile();
-      fetchTweets();
-      fetchReplies();
-      fetchLikes();
-      fetchBookmarks();
-    }
-  }, [isAuthenticated, user]);
+useEffect(() => {
+  if (isAuthenticated) {
+    addProfile();
+    fetchTweets();
+    fetchReplies();
+  }
+}, [isAuthenticated, user]);
+
+useEffect(() => {
+  if (profileData && profileData._id) {
+    fetchLikes();
+    fetchBookmarks();
+  }
+}, [profileData]);
 
   return (
     <div>

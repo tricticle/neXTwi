@@ -8,8 +8,8 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 const bookmarkSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.UUID },
-  user_id: { type: mongoose.Schema.Types.UUID },
-  tweet_id: { type: mongoose.Schema.Types.UUID },
+  user_id: { type: mongoose.Schema.Types.UUID, required: true },
+  tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
   created_at: { type: Date, required: true },
 });
 
@@ -28,7 +28,8 @@ module.exports = async (req, res) => {
       await bookmark.save();
       res.status(201).json({ message: 'Bookmark added successfully' });
     } else if (req.method === 'GET') {
-      const bookmarks = await Bookmark.find().lean(); // Use .lean() to convert to plain JavaScript objects
+      const { user_id } = req.query; // Extract user_id from query parameters
+      const bookmarks = await Bookmark.find({ user_id }).lean(); // Only fetch bookmarks for the current user
       const stringifiedBookmarks = bookmarks.map(bookmark => ({
         ...bookmark,
         user_id: bookmark.user_id.toString(),

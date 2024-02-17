@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
+import Header from "./components/Header";
 
 function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [tweetText, setTweetText] = useState('');
   const [tweets, setTweets] = useState([]);
@@ -16,49 +16,12 @@ function App() {
   const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
   const [hashtags, setHashtags] = useState('');
   const [useLocation, setUseLocation] = useState(false);
-  const [adminData, setAdminData] = useState(null);
   const [showOptions, setShowOptions] = useState(null);
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
   
   const toggleTweetPost = () => {
     setIsTweetPostVisible(!isTweetPostVisible);
   };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMenuOpen && !event.target.closest('.menu-btn')) {
-        closeMenu();
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isMenuOpen) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isMenuOpen]);
 
   const handleLike = async (tweetId) => {
     try {
@@ -365,50 +328,6 @@ function App() {
     }
   };
 
-  const handleAdmin = async () => {
-    try {
-      const response = await fetch('/api/profile', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const adminData = await response.json();
-        setAdminData(adminData);
-        console.log('Admin data:', adminData);
-      } else {
-        console.error('Failed to fetch admin data');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const handleDeleteProfile = async (username) => {
-    try {
-      const response = await fetch(`/api/profile?username=${username}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username,
-        }),
-      });
-  
-      if (response.ok) {
-        console.log('Profile deleted successfully');
-        handleAdmin(); // Reload admin data after deletion
-      } else {
-        console.error('Failed to delete profile');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
 useEffect(() => {
   if (isAuthenticated) {
     addProfile();
@@ -426,55 +345,7 @@ useEffect(() => {
 
   return (
     <div>
-    <section className="wrapper">
-      <header className="header">
-        <h1>twitter</h1>
-        <div className="menu-btn">
-          <button onClick={toggleMenu}>
-            <i className="fas fa-bars"></i>
-          </button>
-          <div className="profile">
-            <div className={`dropdown ${isMenuOpen ? 'open' : ''}`}>
-              {isAuthenticated ? (
-                <>
-                  <img loading="lazy" src={user.picture} alt={user.name} />
-                  <h4>{user.name}!</h4>
-                  {profileData && (
-                    <>
-                      <h4>{profileData._id}</h4>
-                    </>
-                  )}
-                  <h4 className="link">
-                    <a href="https://zaap.bio/tricticle">about us</a>
-                  </h4>
-                  <button onClick={() => { logout(); handleProfile(); }}>Log Out</button>
-                </>
-              ) : (
-                <button onClick={() => { loginWithRedirect(); handleProfile(); }}>Log In</button>
-              )}
-              {isAuthenticated && user.name === 'tricticle' && (
-            <div className="admin-section">
-              <button onClick={handleAdmin}>AdminUser</button>
-              {adminData && (
-                <div className="admin-data">
-                  <h3>Admin Data</h3>
-                    {adminData.map((adminProfile) => (
-                      <h4 key={adminProfile._id}>
-                        {adminProfile.username}{' '}
-                        <button onClick={() => handleDeleteProfile(adminProfile.username)}>
-                          Delete Profile
-                        </button>
-                      </h4>
-                    ))}
-                </div>
-              )}
-            </div>
-          )}
-            </div>
-          </div>
-        </div>
-      </header>
-      </section>
+<Header profileId={profileData ? profileData._id : null} />
       <div className="adjust">
       <div className="container">
         <div className="post-section">

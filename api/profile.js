@@ -1,4 +1,6 @@
+// api/profile.js
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -13,6 +15,29 @@ const profileSchema = new mongoose.Schema({
 });
 
 const Profile = mongoose.model('Profile', profileSchema);
+
+const tweetSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.UUID },
+  text: { type: String, required: true },
+  profile_id: { type: mongoose.Schema.Types.UUID, required: true },
+  created_at: { type: Date, required: true },
+  updated_at: { type: Date, required: true },
+  hashtags: [{ type: String }],
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point',
+    },
+    coordinates: {
+      type: [Number],
+      index: '2dsphere',
+    },
+    placeName: String,
+  },
+});
+
+const Tweet = mongoose.model('Tweet', tweetSchema);
 
 module.exports = async (req, res) => {
   try {
@@ -51,9 +76,14 @@ module.exports = async (req, res) => {
         })));
       }
     } else if (req.method === 'DELETE') {
-      if (req.query.username) {
-        const username = req.query.username;
-        const deletedProfile = await Profile.findOneAndDelete({ username });
+      if (req.query.id) {
+        const userId = req.query.id;
+
+        // Delete tweets posted by the user
+        const deletedTweets = await Tweet.deleteMany({ profile_id: new mongoose.Types.UUID(userId) });
+
+        // Delete the user profile
+        const deletedProfile = await Profile.findByIdAndDelete(userId);
 
         if (deletedProfile) {
           res.json({
@@ -63,12 +93,13 @@ module.exports = async (req, res) => {
               username: deletedProfile.username,
               avatar: deletedProfile.avatar,
             },
+            deletedTweets: deletedTweets.deletedCount, // Number of deleted tweets
           });
         } else {
           res.status(404).json({ error: 'Profile not found' });
         }
       } else {
-        res.status(400).json({ error: 'Username is required for profile deletion' });
+        res.status(400).json({ error: 'User ID is required for profile deletion' });
       }
     } else {
       res.status(400).json({ error: 'Invalid request method' });

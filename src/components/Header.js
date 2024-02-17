@@ -1,6 +1,8 @@
 // Header.js
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
+import SearchResultsPopup from './SearchResultsPopup';
 
 const Header = ({ profileId }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,9 +66,9 @@ const Header = ({ profileId }) => {
     }
   };
 
-  const handleDeleteProfile = async (username) => {
+  const handleDeleteProfile = async (username, profileId) => {
     try {
-      const response = await fetch(`/api/profile?username=${username}`, {
+      const response = await fetch(`/api/profile?id=${profileId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -87,9 +89,48 @@ const Header = ({ profileId }) => {
     }
   };
 
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState({ profiles: [], tweets: [] });
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`/api/search?query=${query}`);
+      setResults(response.data);
+      setShowPopup(true);
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error appropriately (e.g., show an error message to the user)
+    }
+  };
+
+  useEffect(() => {
+    // Automatically trigger search when query changes
+    if (query.trim() !== '') {
+      handleSearch();
+    } else {
+      // Clear results if the query is empty
+      setResults({ profiles: [], tweets: [] });
+      setShowPopup(false);
+    }
+  }, [query]);
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <header className="header">
       <h1>twitter</h1>
+      <input
+        type="text"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {showPopup && (
+        <SearchResultsPopup results={results} onClose={closePopup} />
+      )}
         <div className="menu-btn">
             {isAuthenticated ? (
               <div className="profile">
@@ -107,14 +148,14 @@ const Header = ({ profileId }) => {
               {adminData && (
                 <div className="admin-data">
                   <h3>Admin Data</h3>
-                    {adminData.map((adminProfile) => (
-                      <h4 key={adminProfile._id}>
-                        {adminProfile.username}{' '}
-                        <button onClick={() => handleDeleteProfile(adminProfile.username)}>
-                          Delete Profile
-                        </button>
-                      </h4>
-                    ))}
+                  {adminData.map((adminProfile) => (
+                    <h4 key={adminProfile._id}>
+                      {adminProfile.username}{' '}
+                      <button onClick={() => handleDeleteProfile(adminProfile.username, adminProfile._id)}>
+                        Delete Profile
+                      </button>
+                    </h4>
+                  ))}
                 </div>
               )}
             </div>

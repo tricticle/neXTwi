@@ -192,7 +192,7 @@ body::-webkit-scrollbar {
 }
 
 .header:hover h1{
-  color: var(--background-color);
+  color: var(--secondary-color);
   transition: var(--tran);
 }
 
@@ -244,11 +244,6 @@ body::-webkit-scrollbar {
   color: var(--text-color);
   background-color: var(--background-color);
   border: 3px;
-}
-
-.header:hover {
-  background-color: var(--secondary-color);
-  color: var(--background-color);
 }
 
 .profile {
@@ -321,7 +316,8 @@ body::-webkit-scrollbar {
 .tweet {
   position: relative;
   display: flex;
-  width: 100%;
+  max-width: 500px; /* Set maximum width to 600px */
+  width: 100%; /* Allow it to take up available width */
   border-radius: 7px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.111);
   overflow: hidden;
@@ -401,7 +397,7 @@ font-size: 11px;
 }
 
 .replies .user-info h3{
-  display: none;
+  color: transparent;
   transition: var(--tran);
 }
 .replies:hover .user-info h3{
@@ -621,4 +617,73 @@ input[type="checkbox"]:checked {
 }
 .post-btn i{
   font-size: 17px;
+}
+.popup {
+  position: fixed;
+  top: 79;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+
+.popup-content {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.pop-prop h3{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.prop-cont{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.prop-cont-tweet{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pop-prop img {
+  padding: 3px;
+  aspect-ratio: 1/1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
+}
+
+.pop-prop h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+}
+
+.close-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.close-btn:hover {
+  background-color: var(--text-color);
 }

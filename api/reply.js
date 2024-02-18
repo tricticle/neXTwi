@@ -1,20 +1,12 @@
 // api/reply.js
 const mongoose = require('mongoose');
+const { Reply } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-const replySchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.UUID },
-  text: { type: String, required: true },
-  user_id: { type: mongoose.Schema.Types.UUID, required: true },
-  tweet_id: { type: mongoose.Schema.Types.UUID },
-  reply_id: { type: mongoose.Schema.Types.UUID },
-});
-
-const Reply = mongoose.model('Reply', replySchema);
 
 module.exports = async (req, res) => {
   try {

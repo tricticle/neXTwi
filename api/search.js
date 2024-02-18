@@ -1,43 +1,12 @@
 // api/search.js
 const mongoose = require('mongoose');
 const axios = require('axios');
+const { Profile, Tweet } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const profileSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.UUID },
-  updated_at: { type: Date, required: true },
-  username: { type: String, minLength: 3, required: true, unique: true },
-  avatar: { type: String },
-});
-
-const Profile = mongoose.model('Profile', profileSchema);
-
-const tweetSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.UUID },
-  text: { type: String, required: true },
-  profile_id: { type: mongoose.Schema.Types.UUID, required: true },
-  created_at: { type: Date, required: true },
-  updated_at: { type: Date, required: true },
-  hashtags: [{ type: String }],
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point',
-    },
-    coordinates: {
-      type: [Number],
-      index: '2dsphere',
-    },
-    placeName: String,
-  },
-});
-
-const Tweet = mongoose.model('Tweet', tweetSchema);
 
 module.exports = async (req, res) => {
     try {

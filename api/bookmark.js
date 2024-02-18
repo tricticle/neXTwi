@@ -1,19 +1,11 @@
 // api/bookmark.js
 const mongoose = require('mongoose');
+const { Bookmark } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const bookmarkSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.UUID },
-  user_id: { type: mongoose.Schema.Types.UUID, required: true },
-  tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
-  created_at: { type: Date, required: true },
-});
-
-const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
 
 module.exports = async (req, res) => {
   try {

@@ -1,17 +1,11 @@
 // api/tweethashtag.js
 const mongoose = require('mongoose');
+const { TweetHashtag } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const tweetHashtagSchema = new mongoose.Schema({
-  tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
-  hashtag_id: { type: mongoose.Schema.Types.UUID, required: true },
-});
-
-const TweetHashtag = mongoose.model('TweetHashtag', tweetHashtagSchema);
 
 module.exports = async (req, res) => {
   try {

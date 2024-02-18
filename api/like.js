@@ -1,19 +1,11 @@
 // api/like.js
 const mongoose = require('mongoose');
+const { Like } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const likeSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.UUID },
-  user_id: { type: mongoose.Schema.Types.UUID, required: true },
-  tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
-  created_at: { type: Date, required: true },
-});
-
-const Like = mongoose.model('Like', likeSchema);
 
 module.exports = async (req, res) => {
   try {

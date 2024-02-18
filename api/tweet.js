@@ -1,34 +1,12 @@
 // api/tweet.js
 const mongoose = require('mongoose');
 const axios = require('axios');
+const { Tweet } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const tweetSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.UUID },
-  text: { type: String, required: true },
-  profile_id: { type: mongoose.Schema.Types.UUID, required: true },
-  created_at: { type: Date, required: true },
-  updated_at: { type: Date, required: true },
-  hashtags: [{ type: String }], // Array of hashtag strings
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'], // Enable only 'Point' type for geolocation
-      default: 'Point',
-    },
-    coordinates: {
-      type: [Number], // [longitude, latitude]
-      index: '2dsphere', // Create a 2dsphere index for geolocation queries
-    },
-    placeName: String, // New field to store the place name
-  },
-});
-
-const Tweet = mongoose.model('Tweet', tweetSchema);
 
 const getPlaceName = async (latitude, longitude) => {
   try {

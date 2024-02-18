@@ -1,5 +1,6 @@
 // api/hashtag.js
 const mongoose = require('mongoose');
+const { Hashtag } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

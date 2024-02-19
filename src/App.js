@@ -18,6 +18,7 @@ function App() {
   const [useLocation, setUseLocation] = useState(false);
   const [showOptions, setShowOptions] = useState(null);
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
+  const [followStatus, setFollowStatus] = useState({});
   
   const toggleTweetPost = () => {
     setIsTweetPostVisible(!isTweetPostVisible);
@@ -77,6 +78,81 @@ function App() {
     }
   };
 
+  const fetchFollowStatus = async (userId) => {
+    try {
+      const response = await fetch(`/api/follow?follower_id=${profileData._id}&following_id=${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        const follow = await response.json();
+        setFollowStatus((prevStatus) => ({
+          ...prevStatus,
+          [userId]: follow ? 'Following' : 'Follow',
+        }));
+        return follow ? 'Following' : 'Follow'; // Return the follow status
+      } else if (response.status === 404 && response.statusText === 'Not Found') {
+        // Follow relationship not found, assuming not being followed
+        setFollowStatus((prevStatus) => ({
+          ...prevStatus,
+          [userId]: 'Follow',
+        }));
+        console.log('Follow relationship not found, assuming not being followed');
+        return 'Follow';
+      } else {
+        console.error('Failed to fetch follow status');
+        return null; // or handle the error appropriately
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      return null; // or handle the error appropriately
+    }
+  };
+  
+
+  const handleFollow = async (followingId, followingUsername) => {
+    try {
+      const isFollowing = followStatus[followingId];
+  
+      const method = isFollowing ? 'DELETE' : 'POST';
+  
+      const response = await fetch('/api/follow', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          follower_id: profileData._id,
+          follower_username: profileData.username,
+          following_id: followingId,
+          following_username: followingUsername,
+        }),
+      });
+  
+      if (response.ok) {
+        console.log(`User ${isFollowing ? 'unfollowed' : 'followed'} successfully`);
+  
+        // Fetch follow status for the user who is followed or unfollowed
+        await fetchFollowStatus(followingId);
+        fetchTweets(); // Update tweets after following/unfollowing
+      } else if (response.status === 404 && response.statusText === 'Not Found') {
+        // Follow relationship not found, assuming not being followed
+        setFollowStatus((prevStatus) => ({
+          ...prevStatus,
+          [followingId]: 'Follow',
+        }));
+        console.log('Follow relationship not found, assuming not being followed');
+      } else {
+        console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} user`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
   const fetchLikes = async () => {
     try {
       if (profileData) {
@@ -101,7 +177,7 @@ function App() {
       console.error('Error:', error);
     }
   };
-  
+
   const fetchBookmarks = async () => {
     try {
       if (profileData) {
@@ -126,7 +202,6 @@ function App() {
       console.error('Error:', error);
     }
   };
-  
 
   const toggleOptions = (tweetId) => {
     setShowOptions((prevTweetId) => (prevTweetId === tweetId ? null : tweetId));
@@ -328,142 +403,148 @@ function App() {
     }
   };
 
-useEffect(() => {
-  if (isAuthenticated) {
-    addProfile();
-    fetchTweets();
-    fetchReplies();
-  }
-}, [isAuthenticated, user]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      addProfile();
+      fetchTweets();
+      fetchReplies();
+    }
+  }, [isAuthenticated, user]);
 
-useEffect(() => {
-  if (profileData && profileData._id) {
-    fetchLikes();
-    fetchBookmarks();
-  }
-}, [profileData]);
+  useEffect(() => {
+    if (profileData && profileData._id) {
+      fetchLikes();
+      fetchBookmarks();
+      tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
+    }
+  }, [profileData]);
 
   return (
     <div>
-<Header profileId={profileData ? profileData._id : null} />
+      <Header profileId={profileData ? profileData._id : null} />
       <div className="adjust">
-      <div className="container">
-        <div className="post-section">
-          <h2>Tweets</h2>
-          <div className="tweet-grid">
-  {tweets.map((tweet) => (
-    <div className="tweet" key={tweet._id}>
-      <div className="opos">
-      <div className="avatar">
-      {tweet.avatar && <img src={tweet.avatar} alt={`${tweet.profile_id} Avatar`} />}
-      <div className="user-info">
-      <h3>{tweet.username}</h3>
-      {tweet.location && tweet.location.placeName && (
-        <h6>&nbsp;&nbsp;,<i class="fa-solid fa-location-dot"></i>{tweet.location.placeName}</h6>
-      )}
-      </div>
-    </div>
-      <div className="options">
-        <i className="fa-solid fa-ellipsis-vertical" onClick={() => toggleOptions(tweet._id)}></i>
-        {showOptions === tweet._id && (
-          <div className="options-menu">
-            {profileData?._id !== tweet.profile_id && (
-              <button className="opb" onClick={() => handleBookmark(tweet._id)}>
-                <i class="fa-regular fa-bookmark"></i>
-                {bookmarkedTweets.includes(tweet._id) ? 'remove' : 'Bookmark'}
-              </button>
-            )}
-            {profileData?._id === tweet.profile_id && (
-              <button className="opb" onClick={() => handleDeleteTweet(tweet._id)}>
-                <i class="fa-regular fa-trash-can"></i>Delete
-              </button>
+        <div className="container">
+          <div className="post-section">
+            <h2>Tweets</h2>
+            <div className="tweet-grid">
+              {tweets.map((tweet) => (
+                <div className="tweet" key={tweet._id}>
+                  <div className="opos">
+                    <div className="avatar">
+                      {tweet.avatar && <img src={tweet.avatar} alt={`${tweet.profile_id} Avatar`} />}
+                      <div className="user-info">
+                        <h3>{tweet.username}</h3>
+                        {tweet.location && tweet.location.placeName && (
+                          <h6>&nbsp;&nbsp;,<i className="fa-solid fa-location-dot"></i>{tweet.location.placeName}</h6>
+                        )}
+                    {profileData?._id !== tweet.profile_id && (
+                            <button className="fbtn" onClick={() => handleFollow(tweet.profile_id, tweet.username)}>
+                              {followStatus[tweet.profile_id] === 'Following' ? 'Following' : 'Follow'}
+                              </button>
+                      )}
+                      </div>
+                    </div>
+                    <div className="options">
+                      <i className="fa-solid fa-ellipsis-vertical" onClick={() => toggleOptions(tweet._id)}></i>
+                      {showOptions === tweet._id && (
+                        <div className="options-menu">
+                          {profileData?._id !== tweet.profile_id && (
+                            <button className="opb" onClick={() => handleBookmark(tweet._id)}>
+                              <i className="fa-regular fa-bookmark"></i>
+                              {bookmarkedTweets.includes(tweet._id) ? 'remove' : 'Bookmark'}
+                            </button>
+                          )}
+                          {profileData?._id === tweet.profile_id && (
+                            <button className="opb" onClick={() => handleDeleteTweet(tweet._id)}>
+                              <i className="fa-regular fa-trash-can"></i>Delete
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="tweet-area">
+                    {tweet.hashtags && (
+                      <p>{tweet.hashtags.map((tag, index) => (
+                        <span key={index} className="hashtag"> #{tag}</span>
+                      ))}</p>
+                    )}
+                    <h5>{tweet.text}</h5>
+                  </div>
+                  <div className="button-group">
+                    {selectedTweetId === tweet._id ? (
+                      <>
+                        <input
+                          type="text"
+                          placeholder="Type your reply here"
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                        />
+                        <button onClick={() => postReply(tweet._id)}>
+                          Reply
+                        </button>
+                      </>
+                    ) : (
+                      <button onClick={() => setSelectedTweetId(tweet._id)}>
+                        Reply
+                      </button>
+                    )}
+                    <button
+                      className={likedTweets.includes(tweet._id) ? "liked" : ""}
+                      onClick={() => handleLike(tweet._id)}
+                    >
+                      <i className="fas fa-heart"></i>
+                    </button>
+                  </div>
+                  {repliesTweets.map((reply) => {
+                    if (reply.tweet_id === tweet._id) {
+                      return (
+                        <div className="replies" key={reply._id}>
+                          <div className="user-info">
+                            <img className="avatar" src={reply.avatar} alt={`${reply.user_id} Avatar`} />
+                            <h3>{reply.username}</h3>
+                          </div>
+                          <div className="reptext">
+                            <p>{reply.text}</p>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="pos">
+            <button className="post-btn" onClick={toggleTweetPost}>
+              <i className="fa-regular fa-pen-to-square"></i>
+            </button>
+            {isTweetPostVisible && (
+              <div className="tweet-post">
+                <textarea
+                  placeholder="What's happening?"
+                  value={tweetText}
+                  onChange={(e) => setTweetText(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Add hashtags"
+                  value={hashtags}
+                  onChange={(e) => setHashtags(e.target.value)}
+                />
+                <div className="location">
+                  <input
+                    type="checkbox"
+                    checked={useLocation}
+                    onChange={() => setUseLocation(!useLocation)}
+                  />
+                  location
+                </div>
+                <button onClick={postTweet}>Tweet</button>
+              </div>
             )}
           </div>
-        )}
-      </div>
-      </div>
-      <div className="tweet-area">
-      {tweet.hashtags && (
-      <p>{tweet.hashtags.map((tag, index) => (
-        <span key={index} className="hashtag"> #{tag}</span>
-      ))}</p>
-    )}
-      <h5>{tweet.text}</h5>
-      </div>
-      <div className="button-group">
-              {selectedTweetId === tweet._id ? (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Type your reply here"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                  />
-                  <button onClick={() => postReply(tweet._id, replyText)}>
-                    Reply
-                  </button>
-                </>
-              ) : (
-                <button onClick={() => setSelectedTweetId(tweet._id)}>
-                  Reply
-                </button>
-              )}
-<button
-  className={likedTweets.includes(tweet._id) ? "liked" : ""}
-  onClick={() => handleLike(tweet._id)}
->
-<i className="fas fa-heart"></i>
-</button>
-</div>
-{repliesTweets.map((reply) => {
-  if (reply.tweet_id === tweet._id) {
-    return (
-      <div className="replies" key={reply._id}>
-        <div className="user-info">
-        <img className="avatar" src={reply.avatar} alt={`${reply.user_id} Avatar`} />
-        <h3>{reply.username}</h3>
-        </div>
-        <div className="reptext">
-        <p>{reply.text}</p>
-        </div>
-      </div>
-    );
-  }
-  return null;
-})}
-</div>
-  ))}
-</div>
-        </div>
-      </div>
-      <div className="pos">
-          <button className="post-btn" onClick={toggleTweetPost}>
-          <i class="fa-regular fa-pen-to-square"></i>
-          </button>
-          {isTweetPostVisible && (
-            <div className="tweet-post">
-              <textarea
-                placeholder="What's happening?"
-                value={tweetText}
-                onChange={(e) => setTweetText(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Add hashtags"
-                value={hashtags}
-                onChange={(e) => setHashtags(e.target.value)}
-              />
-              <div className="location">
-                <input
-                  type="checkbox"
-                  checked={useLocation}
-                  onChange={() => setUseLocation(!useLocation)}
-                />
-                location
-              </div>
-              <button onClick={postTweet}>Tweet</button>
-            </div>
-          )}
         </div>
       </div>
     </div>

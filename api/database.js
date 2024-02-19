@@ -1,3 +1,4 @@
+//api/database.js
 const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
@@ -75,6 +76,17 @@ const profileSchema = new mongoose.Schema({
   
   const Reply = mongoose.model('Reply', replySchema);
 
+  const followSchema = new mongoose.Schema({
+    _id: { type: mongoose.Schema.Types.UUID },
+    follower_id: { type: mongoose.Schema.Types.UUID, required: true },
+    follower_username: { type: String, required: true },
+    following_id: { type: mongoose.Schema.Types.UUID, required: true },
+    following_username: { type: String, required: true },
+    created_at: { type: Date, required: true },
+  });
+  
+  const Follow = mongoose.model('Follow', followSchema);
+  
   module.exports = {
     Profile,
     Tweet,
@@ -83,5 +95,6 @@ const profileSchema = new mongoose.Schema({
     TweetHashtag,
     Bookmark,
     Reply,
+    Follow, // Add the Follow model to the exports
   };
   

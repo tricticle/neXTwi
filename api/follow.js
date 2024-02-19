@@ -1,71 +1,91 @@
 // api/follow.js
 const mongoose = require('mongoose');
-const axios = require('axios');
+const { Follow, Profile } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-const profileSchema = new mongoose.Schema({
-    _id: { type: mongoose.Schema.Types.UUID },
-    updated_at: { type: Date, required: true },
-    username: { type: String, minLength: 3, required: true, unique: true },
-    avatar: { type: String },
-});
-
-const Profile = mongoose.model('Profile', profileSchema); // Move Profile model definition above followSchema
-
-const followSchema = new mongoose.Schema({
-  follower_id: { type: mongoose.Schema.Types.UUID, required: true, unique: true },
-  following_id: { type: mongoose.Schema.Types.UUID, required: true },
-});
-
-const Follow = mongoose.model('Follow', followSchema);
-
 module.exports = async (req, res) => {
   try {
     if (req.method === 'POST') {
-      const { follower_id, following_id } = req.body;
-      const follow = new Follow({ follower_id, following_id });
+      const { follower_id, follower_username, following_id, following_username } = req.body;
+
+      // Check if follower_id and following_id are not the same
+      if (follower_id === following_id) {
+        return res.status(400).json({ error: 'Follower and following cannot be the same user' });
+      }
+
+      // Check if the follow relationship already exists
+      const existingFollow = await Follow.findOne({
+        follower_id,
+        following_id,
+      });
+
+      if (existingFollow) {
+        return res.status(400).json({ error: 'Follow relationship already exists' });
+      }
+
+      // Check if the user IDs exist in the Profile collection
+      const followerExists = await Profile.exists({ _id: follower_id });
+      const followingExists = await Profile.exists({ _id: following_id });
+
+      if (!followerExists || !followingExists) {
+        return res.status(404).json({ error: 'Follower or following user not found' });
+      }
+
+      // Create the follow relationship
+      const follow = new Follow({
+        _id: new mongoose.Types.UUID(),
+        follower_id,
+        follower_username,
+        following_id,
+        following_username,
+        created_at: new Date(),
+      });
+
       await follow.save();
-      res.status(201).json({ message: 'Follow relationship added successfully' });
+      res.status(201).json(follow);
     } else if (req.method === 'GET') {
-      if (req.query.follower_id) {
-        const followerId = req.query.follower_id;
-        const followingList = await Follow.find({ follower_id: followerId }, 'following_id').lean();
-        const followingIds = followingList.map(entry => entry.following_id);
-        
-        // Fetch usernames for the following list
-        const followingProfiles = await Profile.find({ _id: { $in: followingIds } }, 'username').lean();
-        
-        res.json(followingProfiles.map(profile => profile.username));
-      } else if (req.query.following_id) {
-        const followingId = req.query.following_id;
-        const followerList = await Follow.find({ following_id: followingId }, 'follower_id').lean();
-        const followerIds = followerList.map(entry => entry.follower_id);
-        
-        // Fetch usernames for the follower list
-        const followerProfiles = await Profile.find({ _id: { $in: followerIds } }, 'username').lean();
-        
-        res.json(followerProfiles.map(profile => profile.username));
+      if (req.query.follower_id && req.query.following_id) {
+        // Fetch follow relationship by follower_id and following_id
+        const query = {
+          follower_id: req.query.follower_id,
+          following_id: req.query.following_id,
+        };
+
+        const follow = await Follow.findOne(query).lean();
+
+        if (follow) {
+          res.json({
+            _id: follow._id.toString(),
+            follower_id: follow.follower_id,
+            follower_username: follow.follower_username,
+            following_id: follow.following_id,
+            following_username: follow.following_username,
+            created_at: follow.created_at,
+          });
+        } else {
+          res.status(404).json({ error: 'Follow relationship not found' });
+        }
       } else {
-        res.status(400).json({ error: 'Invalid query parameters' });
+        res.status(400).json({ error: 'Both follower_id and following_id are required for fetching a follow relationship' });
       }
     } else if (req.method === 'DELETE') {
       const { follower_id, following_id } = req.body;
-      const deletedFollow = await Follow.findOneAndDelete({ follower_id, following_id });
-      
-      if (deletedFollow) {
-        res.json({
-          message: 'Follow relationship deleted successfully',
-          deletedFollow: {
-            follower_id: deletedFollow.follower_id.toString(),
-            following_id: deletedFollow.following_id.toString(),
-          },
-        });
+
+      if (follower_id && following_id) {
+        // Delete the follow relationship
+        const result = await Follow.deleteOne({ follower_id, following_id });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ error: 'Follow relationship not found' });
+        }
+
+        res.json({ message: 'Follow relationship deleted successfully' });
       } else {
-        res.status(404).json({ error: 'Follow relationship not found' });
+        res.status(400).json({ error: 'Both follower_id and following_id are required for deleting a follow relationship' });
       }
     } else {
       res.status(400).json({ error: 'Invalid request method' });

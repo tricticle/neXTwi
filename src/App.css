@@ -702,3 +702,15 @@ input[type="checkbox"]:checked {
 .close-btn:hover {
   background-color: var(--text-color);
 }
+
+.tweet .fbtn {
+  background-color: #1da1f2; /* Twitter blue, you can adjust the color as needed */
+  color: #ffffff; /* White text for contrast */
+  border: none;
+  padding: 3px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}

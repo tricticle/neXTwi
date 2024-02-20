@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       });
 
       if (existingFollow) {
-        return res.status(400).json({ error: 'Follow relationship already exists' });
+        return res.status(302).json({ error: 'Follow relationship already exists' });
       }
 
       // Check if the user IDs exist in the Profile collection

@@ -77,7 +77,42 @@ function App() {
       console.error('Error:', error);
     }
   };
-
+  
+  const handleFollow = async (followingId, followingUsername) => {
+    try {
+      const isFollowing = followStatus[followingId];
+      const method = isFollowing ? 'DELETE' : 'POST';
+  
+      const response = await fetch('/api/follow', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          follower_id: profileData._id,
+          follower_username: profileData.username,
+          following_id: followingId,
+          following_username: followingUsername,
+        }),
+      });
+  
+      if (response.ok) {
+        // Instead of relying on the current state, check the response from the server
+        const newFollowStatus = await fetchFollowStatus(followingId);
+        console.log(`User ${isFollowing ? 'unfollowed' : 'followed'} successfully`);
+        setFollowStatus((prevStatus) => ({
+          ...prevStatus,
+          [followingId]: newFollowStatus,
+        }));
+      } else {
+        console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} user`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
+  
   const fetchFollowStatus = async (userId) => {
     try {
       const response = await fetch(`/api/follow?follower_id=${profileData._id}&following_id=${userId}`, {
@@ -109,47 +144,6 @@ function App() {
     } catch (error) {
       console.error('Error:', error);
       return null; // or handle the error appropriately
-    }
-  };
-  
-
-  const handleFollow = async (followingId, followingUsername) => {
-    try {
-      const isFollowing = followStatus[followingId];
-  
-      const method = isFollowing ? 'DELETE' : 'POST';
-  
-      const response = await fetch('/api/follow', {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          follower_id: profileData._id,
-          follower_username: profileData.username,
-          following_id: followingId,
-          following_username: followingUsername,
-        }),
-      });
-  
-      if (response.ok) {
-        console.log(`User ${isFollowing ? 'unfollowed' : 'followed'} successfully`);
-  
-        // Fetch follow status for the user who is followed or unfollowed
-        await fetchFollowStatus(followingId);
-        fetchTweets(); // Update tweets after following/unfollowing
-      } else if (response.status === 404 && response.statusText === 'Not Found') {
-        // Follow relationship not found, assuming not being followed
-        setFollowStatus((prevStatus) => ({
-          ...prevStatus,
-          [followingId]: 'Follow',
-        }));
-        console.log('Follow relationship not found, assuming not being followed');
-      } else {
-        console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} user`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
     }
   };
   
@@ -418,6 +412,13 @@ function App() {
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
   }, [profileData]);
+
+  
+  useEffect(() => {
+    if (profileData && profileData._id) {
+      tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
+    }
+  }, [tweets]);
 
   return (
     <div>

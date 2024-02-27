@@ -228,7 +228,7 @@ body::-webkit-scrollbar {
 .dropdown.open {
   display: flex;
   position: absolute;
-  top: 79px;
+  bottom: 69px;
   right: 10px;
   background-color: var(--background-color);
   color: var(--text-color);
@@ -296,16 +296,13 @@ body::-webkit-scrollbar {
   font-size: 9px;
   animation: color 15s infinite;
 }
-.adjust{
-  margin-top: 7px;
-  margin-bottom: 77px;
-}
 
 .container {
-  padding: 7px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    padding: 7px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
 }
 
 .tweet-grid {
@@ -510,9 +507,15 @@ i{
 }
 
 
-.post-section{
- text-align: center;
- margin: 3px;
+.post-section {
+  text-align: center;
+  margin: 3px;
+  width: 100%; /* Set width to 100% to cover the maximum size */
+}
+
+.tps{
+  display: flex;
+  justify-content: center;
 }
 
 .tweet button {
@@ -713,4 +716,92 @@ input[type="checkbox"]:checked {
   display: flex;
   align-items: center;
   font-size: 11px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  max-height: 90dvh;
+}
+
+.sidebar-menu{
+  display: flex;
+  flex-direction: column;
+}
+
+.fab{
+  display: flex;
+  justify-content: center;
+}
+
+.fa-twitter {
+  color: var(--secondary-color);
+  font-size: 30px;
+}
+
+.sidebarOption {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--tran);
+  margin: 0px 7px;
+}
+
+.sidebarOption .material-icons,
+.fa-twitter {
+  padding: 20px;
+}
+
+.sidebarOption h2 {
+  font-weight: 800;
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.sidebarOption:hover {
+  background-color: var(--secondary-color);
+  border-radius: 30px;
+  color: var(--twitter-color);
+}
+
+.sidebarOption.active {
+  color: var(--secondary-color);
+}
+
+.sidebarOption.active:hover {
+  color: var(--text-color);
+}
+
+.sidebar__tweet {
+  background-color: var(--secondary-color);
+  border: none;
+  color: rgb(255, 255, 255);
+  font-weight: 900;
+  border-radius: 30px;
+  padding: 10px 1px;
+  margin: 30px;
+}
+
+.widgets{
+  padding: 17px;
+}
+
+.widgets__widgetContainer {
+  position: sticky;
+  top: 0;
+  padding: 20px;
+  background-color: #f5f8fa;
+  border-radius: 20px;
+  width: 300px;
+  text-wrap: balance;
+  font-weight: 500;
+}
+
+.widgets__widgetContainer h2 {
+  font-size: 18px;
+  font-weight: 800;
 }

@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import Header from "./components/Header";
+import SideNav from "./components/SideNav";
+import SearchResults from "./components/SearchResults";
 
 function App() {
   const { isAuthenticated, user } = useAuth0();
@@ -20,10 +21,13 @@ function App() {
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
   const [followStatus, setFollowStatus] = useState({});
   
-  const handleTweetButtonClick = (event) => {
+  const handleTweetButtonClick = () => {
     setIsTweetPostVisible(!isTweetPostVisible);
   };
 
+  const handleSubscribeClick = () => {
+    alert("feature coming soon!");
+  };
 
   const handleLike = async (tweetId) => {
     try {
@@ -454,12 +458,12 @@ function App() {
 
   return (
     <div className="container">
-      <Header
+      <SideNav
         profileId={profileData ? profileData._id : null}
         onTweetButtonClick={handleTweetButtonClick}
+        onSomeClick={handleSubscribeClick}
       />
       <div className="post-section">
-        <h2>Tweets</h2>
         <div className="tweet-grid">
           {tweets.map((tweet) => (
             <div className="tweet" key={tweet._id}>
@@ -611,6 +615,17 @@ function App() {
         </div>
       </div>
       <div className="widgets">
+        <SearchResults />
+        <div className="widgets__widgetContainer">
+          <h2>Subscribe to Premium</h2>
+          <p>
+            Subscribe to unlock new features and if eligible, receive a share of
+            ads revenue.
+          </p>
+          <div className="menu-btn">
+            <button onClick={handleSubscribeClick}>Subscribe</button>
+          </div>
+        </div>
         <div className="widgets__widgetContainer">
           <h2>What's happening?</h2>
           <p>

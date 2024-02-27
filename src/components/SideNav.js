@@ -1,10 +1,8 @@
 // Header.js
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
-import SearchResultsPopup from "./SearchResultsPopup";
 
-const Header = ({ profileId, onTweetButtonClick }) => {
+const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
   const [adminData, setAdminData] = useState(null);
@@ -104,36 +102,6 @@ const Header = ({ profileId, onTweetButtonClick }) => {
     }
   };
 
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState({ profiles: [], tweets: [] });
-  const [showPopup, setShowPopup] = useState(false);
-
-  const handleSearch = async () => {
-    try {
-      const response = await axios.get(`/api/search?query=${query}`);
-      setResults(response.data);
-      setShowPopup(true);
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error appropriately (e.g., show an error message to the user)
-    }
-  };
-
-  useEffect(() => {
-    // Automatically trigger search when query changes
-    if (query.trim() !== "") {
-      handleSearch();
-    } else {
-      // Clear results if the query is empty
-      setResults({ profiles: [], tweets: [] });
-      setShowPopup(false);
-    }
-  }, [query]);
-
-  const closePopup = () => {
-    setShowPopup(false);
-  };
-
   return (
     <div className="sidebar">
       <div className="sidebar-menu">
@@ -151,20 +119,12 @@ const Header = ({ profileId, onTweetButtonClick }) => {
           onClick={() => handleOptionClick("explore")}
         >
           <span className="material-icons">search</span>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          {showPopup && (
-            <SearchResultsPopup results={results} onClose={closePopup} />
-          )}
+          <h2>Explore</h2>
         </div>
 
         <div
           className={`sidebarOption ${isActive("notifications")}`}
-          onClick={() => handleOptionClick("notifications")}
+          onClick={() => handleOptionClick("notifications") || onSomeClick()}
         >
           <span className="material-icons">notifications_none</span>
           <h2>Notifications</h2>
@@ -172,7 +132,7 @@ const Header = ({ profileId, onTweetButtonClick }) => {
 
         <div
           className={`sidebarOption ${isActive("messages")}`}
-          onClick={() => handleOptionClick("messages")}
+          onClick={() => handleOptionClick("messages") || onSomeClick()}
         >
           <span className="material-icons">mail_outline</span>
           <h2>Messages</h2>
@@ -190,8 +150,8 @@ const Header = ({ profileId, onTweetButtonClick }) => {
           className={`sidebarOption ${isActive("lists")}`}
           onClick={() => handleOptionClick("lists")}
         >
-          <span className="material-icons">list_alt</span>
-          <h2>Lists</h2>
+          <span class="material-icons">favorite_border</span>
+          <h2>Likes</h2>
         </div>
 
         <div
@@ -266,4 +226,4 @@ const Header = ({ profileId, onTweetButtonClick }) => {
   );
 };
 
-export default Header;
+export default SideNav;

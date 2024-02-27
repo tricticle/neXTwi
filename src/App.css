@@ -542,7 +542,6 @@ input[type="text"] {
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
   text-align: center;
-  box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -627,10 +626,7 @@ input[type="checkbox"]:checked {
   font-size: 17px;
 }
 .popup {
-  position: fixed;
-  top: 79;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: 20px;
   background-color: white;
   padding: 20px;
   border: 1px solid #ccc;
@@ -787,12 +783,17 @@ input[type="checkbox"]:checked {
 }
 
 .widgets{
-  padding: 17px;
+    position: sticky;
+    top: 0;
+    display: flex;
+    padding: 17px;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    height: 90dvh;
 }
 
 .widgets__widgetContainer {
-  position: sticky;
-  top: 0;
   padding: 20px;
   background-color: #f5f8fa;
   border-radius: 20px;
@@ -804,4 +805,23 @@ input[type="checkbox"]:checked {
 .widgets__widgetContainer h2 {
   font-size: 18px;
   font-weight: 800;
+}
+
+.widgets__input {
+  display: flex;
+  align-items: center;
+  background-color: #f5f8fa;
+  padding: 10px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.widgets__input input {
+  border: none;
+  background-color: #f5f8fa;
+}
+
+.widgets__searchIcon {
+  color: gray;
 }

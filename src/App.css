@@ -6,6 +6,7 @@
   --secondary-color: #50b9ff;
   --background-color: #ffffff;
   --text-color: #000000;
+  --side-color: #f5f8fa;;
 }
 
 @keyframes color {
@@ -312,6 +313,7 @@ body::-webkit-scrollbar {
   justify-content: center;
   flex-wrap: wrap;
   padding: 10px;
+  min-width: 300px;
   gap: 17px;
 }
 
@@ -721,7 +723,12 @@ input[type="checkbox"]:checked {
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: space-between;
-  max-height: 90dvh;
+  max-height: 100dvh;
+  border-right: 3px solid var(--side-color);
+}
+
+.sidebar .profile{
+  margin-bottom: 30px;
 }
 
 .sidebar-menu{
@@ -790,12 +797,13 @@ input[type="checkbox"]:checked {
     flex-direction: column;
     align-items: center;
     gap: 30px;
-    height: 90dvh;
+    height: 100dvh;
+    border-left: 3px solid var(--side-color);
 }
 
 .widgets__widgetContainer {
   padding: 20px;
-  background-color: #f5f8fa;
+  background-color: var(--side-color);
   border-radius: 20px;
   width: 300px;
   text-wrap: balance;
@@ -810,7 +818,7 @@ input[type="checkbox"]:checked {
 .widgets__input {
   display: flex;
   align-items: center;
-  background-color: #f5f8fa;
+  background-color: var(--side-color);
   padding: 10px;
   border-radius: 20px;
   margin-top: 10px;
@@ -819,7 +827,7 @@ input[type="checkbox"]:checked {
 
 .widgets__input input {
   border: none;
-  background-color: #f5f8fa;
+  background-color: var(--side-color);
 }
 
 .widgets__searchIcon {

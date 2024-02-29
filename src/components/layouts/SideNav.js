@@ -1,6 +1,6 @@
-// Header.js
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Link } from "react-router-dom";
 
 const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -106,69 +106,70 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
     <div className="sidebar">
       <div className="sidebar-menu">
         <i className="fab fa-twitter"></i>
-        <div
+        <Link
+          to="/home"
           className={`sidebarOption ${isActive("home")}`}
           onClick={() => handleOptionClick("home")}
         >
           <span className="material-icons">home</span>
           <h2>Home</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/Explore"
           className={`sidebarOption ${isActive("explore")}`}
           onClick={() => handleOptionClick("explore")}
         >
           <span className="material-icons">search</span>
           <h2>Explore</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/Notifications"
           className={`sidebarOption ${isActive("notifications")}`}
           onClick={() => handleOptionClick("notifications") || onSomeClick()}
         >
           <span className="material-icons">notifications_none</span>
           <h2>Notifications</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/Messages"
           className={`sidebarOption ${isActive("messages")}`}
           onClick={() => handleOptionClick("messages") || onSomeClick()}
         >
           <span className="material-icons">mail_outline</span>
           <h2>Messages</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/Bookmarks"
           className={`sidebarOption ${isActive("bookmarks")}`}
           onClick={() => handleOptionClick("bookmarks")}
         >
           <span className="material-icons">bookmark_border</span>
           <h2>Bookmarks</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/Likes"
           className={`sidebarOption ${isActive("lists")}`}
           onClick={() => handleOptionClick("lists")}
         >
-          <span class="material-icons">favorite_border</span>
+          <span className="material-icons">favorite_border</span>
           <h2>Likes</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/Profile"
           className={`sidebarOption ${isActive("profile")}`}
           onClick={() => handleOptionClick("profile")}
         >
           <span className="material-icons">perm_identity</span>
           <h2>Profile</h2>
-        </div>
-
-        <div
+        </Link>
+        <Link
+          to="/More"
           className={`sidebarOption ${isActive("more")}`}
           onClick={() => handleOptionClick("more")}
         >
           <span className="material-icons">more_horiz</span>
           <h2>More</h2>
-        </div>
+        </Link>
         <button className="sidebar__tweet" onClick={toggleTweetPost}>
           Tweet
         </button>

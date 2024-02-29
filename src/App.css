@@ -299,7 +299,6 @@ body::-webkit-scrollbar {
 }
 
 .container {
-    padding: 7px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -313,7 +312,6 @@ body::-webkit-scrollbar {
   justify-content: center;
   flex-wrap: wrap;
   padding: 10px;
-  min-width: 300px;
   gap: 17px;
 }
 
@@ -512,7 +510,8 @@ i{
 .post-section {
   text-align: center;
   margin: 3px;
-  width: 100%; /* Set width to 100% to cover the maximum size */
+  width: 100%;
+  min-width: 300px; /* Set width to 100% to cover the maximum size */
 }
 
 .tps{
@@ -752,6 +751,8 @@ input[type="checkbox"]:checked {
   cursor: pointer;
   transition: var(--tran);
   margin: 0px 7px;
+  text-decoration: none;
+  color: var(--text-color);
 }
 
 .sidebarOption .material-icons,
@@ -789,6 +790,34 @@ input[type="checkbox"]:checked {
   margin: 30px;
 }
 
+@media (max-width: 50em) {
+  .sidebarOption {
+  display: flex;
+  display: flex;
+  justify-content: center;
+}
+  .sidebarOption h2 {
+    display: none;
+}
+.sidebar__tweet {
+  background-color: #000000;
+  padding: 10px 15px;
+  margin: 9px;
+  font-size: 12px;
+}
+.profile h4{
+  display: none;
+}
+}
+
+.explore{
+display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
 .widgets{
     position: sticky;
     top: 0;
@@ -805,7 +834,8 @@ input[type="checkbox"]:checked {
   padding: 20px;
   background-color: var(--side-color);
   border-radius: 20px;
-  width: 300px;
+  min-width: 200px;
+  max-width: 300px;
   text-wrap: balance;
   font-weight: 500;
 }
@@ -821,8 +851,8 @@ input[type="checkbox"]:checked {
   background-color: var(--side-color);
   padding: 10px;
   border-radius: 20px;
+  max-width: 300px;
   margin-top: 10px;
-  margin-left: 20px;
 }
 
 .widgets__input input {
@@ -832,4 +862,61 @@ input[type="checkbox"]:checked {
 
 .widgets__searchIcon {
   color: gray;
+}
+
+.tpsec {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  z-index: 99;
+}
+
+.tweet-post-2 {
+  background-color: var(--background-color);
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.tweet-post-2 input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 7px;
+    justify-content: center;
+}
+
+.tweet-post-2 button {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tweet-post-2 button:hover {
+  background-color: var(--text-color);
 }

@@ -26,8 +26,8 @@ const SearchResults = () => {
 
   return (
     <div className="explore">
-      <div class="widgets__input">
-        <span class="material-icons widgets__searchIcon"> search </span>
+      <div className="widgets__input">
+        <span className="material-icons widgets__searchIcon"> search </span>
         <input
           type="text"
           placeholder="Search..."

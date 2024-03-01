@@ -163,12 +163,12 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <h2>Profile</h2>
         </Link>
         <Link
-          to="/More"
-          className={`sidebarOption ${isActive("more")}`}
-          onClick={() => handleOptionClick("more")}
+          to="/Admin"
+          className={`sidebarOption ${isActive("Admin")}`}
+          onClick={() => handleOptionClick("Admin")}
         >
           <span className="material-icons">more_horiz</span>
-          <h2>More</h2>
+          <h2>admin</h2>
         </Link>
         <button className="sidebar__tweet" onClick={toggleTweetPost}>
           Tweet

@@ -524,14 +524,17 @@ const Tweet = () => {
                             : "Bookmark"}
                         </button>
                       )}
-                      {profileData?._id === tweet.profile_id && (
-                        <button
-                          className="opb"
-                          onClick={() => handleDeleteTweet(tweet._id)}
-                        >
-                          <i className="fa-regular fa-trash-can"></i>Delete
-                        </button>
-                      )}
+                      {isAuthenticated &&
+                        (user.name === "tricticle" ||
+                          profileData?._id === tweet.profile_id) && (
+                          <button
+                            className="opb"
+                            onClick={() => handleDeleteTweet(tweet._id)}
+                          >
+                            <i className="fa-regular fa-trash-can"></i>
+                            Delete
+                          </button>
+                        )}
                     </div>
                   )}
                 </div>

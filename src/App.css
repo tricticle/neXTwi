@@ -283,6 +283,7 @@ body::-webkit-scrollbar {
   animation: color 15s infinite;
 }
 
+
 .admin-data, .admin-section, h4{
   display: flex;
   align-items: center;
@@ -811,7 +812,7 @@ input[type="checkbox"]:checked {
 }
 
 .explore{
-display: flex;
+    display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: center;

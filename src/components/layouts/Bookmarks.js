@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import SideNav from "./layouts/SideNav";
-import SearchResults from "./layouts/SearchResults";
-import TweetPost from "./TweetPost";
-import { Outlet } from "react-router-dom";
 
-const Home = () => {
+const Bookmarks = () => {
+  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
   const { isAuthenticated, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [tweetText, setTweetText] = useState("");
@@ -15,7 +13,6 @@ const Home = () => {
   const [selectedTweetId, setSelectedTweetId] = useState(null);
   const [repliesTweets, setRepliesTweets] = useState([]);
   const [likedTweets, setLikedTweets] = useState([]);
-  const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
   const [hashtags, setHashtags] = useState("");
   const [useLocation, setUseLocation] = useState(false);
   const [showOptions, setShowOptions] = useState(null);
@@ -182,34 +179,6 @@ const Home = () => {
           console.log("Likes:", likes);
         } else {
           console.error("Failed to fetch likes");
-        }
-      } else {
-        console.error("Profile data is not available");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchBookmarks = async () => {
-    try {
-      if (profileData) {
-        const response = await fetch(
-          `/api/bookmark?user_id=${profileData._id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const bookmarks = await response.json();
-          setBookmarkedTweets(bookmarks.map((bookmark) => bookmark.tweet_id));
-          console.log("Bookmarks:", bookmarks);
-        } else {
-          console.error("Failed to fetch bookmarks");
         }
       } else {
         console.error("Profile data is not available");
@@ -457,17 +426,47 @@ const Home = () => {
     }
   }, [tweets]);
 
+const fetchBookmarks = () => {
+  if (profileData && profileData._id) {
+    return fetch(`/api/bookmark?user_id=${profileData._id}`)
+      .then((res) => res.json())
+      .then((data) => setBookmarks(data))
+      .catch((error) => console.error("Error fetching bookmarks:", error));
+  }
+};
+
+const fetchBookmarkedTweets = () => {
+  if (profileData && profileData._id && bookmarks.length > 0) {
+    const tweetIds = bookmarks.map((bookmark) => bookmark.tweet_id);
+    return fetch(`/api/tweet?tweet_ids=${tweetIds.join(",")}`)
+      .then((res) => res.json())
+      .then((data) =>
+        setBookmarkedTweets(
+          data.filter((tweet) => tweetIds.includes(tweet._id))
+        )
+      )
+      .catch((error) =>
+        console.error("Error fetching bookmarked tweets:", error)
+      );
+  }
+};
+
+useEffect(() => {
+  fetchBookmarks();
+}, [profileData]);
+
+useEffect(() => {
+  if (bookmarks.length > 0) {
+    fetchBookmarkedTweets();
+  }
+}, [bookmarks]);
+
+
   return (
-    <div className="container">
-      <SideNav
-        profileId={profileData ? profileData._id : null}
-        onTweetButtonClick={handleTweetButtonClick}
-        onSomeClick={handleSubscribeClick}
-      />
-      <div className="post-section">
-        <Outlet />
-        <div className="tweet-grid">
-          {tweets.map((tweet) => (
+    <div className="App">
+      <center>
+        {bookmarkedTweets.map((tweet) => (
+          <div className="tweet" key={tweet._id}>
             <div className="tweet" key={tweet._id}>
               <div className="opos">
                 <div className="avatar">
@@ -521,13 +520,13 @@ const Home = () => {
                       {isAuthenticated &&
                         (user.name === "tricticle" ||
                           profileData?._id === tweet.profile_id) && (
-                              <button
-                                className="opb"
-                                onClick={() => handleDeleteTweet(tweet._id)}
-                              >
-                                <i className="fa-regular fa-trash-can"></i>
-                                Delete
-                              </button>
+                          <button
+                            className="opb"
+                            onClick={() => handleDeleteTweet(tweet._id)}
+                          >
+                            <i className="fa-regular fa-trash-can"></i>
+                            Delete
+                          </button>
                         )}
                     </div>
                   )}
@@ -590,62 +589,11 @@ const Home = () => {
                 return null;
               })}
             </div>
-          ))}
-        </div>
-        <div className="tps">
-          {isTweetPostVisible && (
-            <div className="tweet-post">
-              <textarea
-                placeholder="What's happening?"
-                value={tweetText}
-                onChange={(e) => setTweetText(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Add hashtags"
-                value={hashtags}
-                onChange={(e) => setHashtags(e.target.value)}
-              />
-              <div className="location">
-                <input
-                  type="checkbox"
-                  checked={useLocation}
-                  onChange={() => setUseLocation(!useLocation)}
-                />
-                location
-              </div>
-              <button onClick={postTweet}>Tweet</button>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="widgets">
-        <SearchResults />
-        <div className="widgets__widgetContainer">
-          <h2>Subscribe to Premium</h2>
-          <p>
-            Subscribe to unlock new features and if eligible, receive a share of
-            ads revenue.
-          </p>
-          <div className="menu-btn">
-            <button onClick={handleSubscribeClick}>Subscribe</button>
           </div>
-        </div>
-        <div className="widgets__widgetContainer">
-          <h2>What's happening?</h2>
-          <p>
-            This part handles the addition of a new profile when the HTTP method
-            is a POST request. If you're looking for an alternative way to add
-            data, you might consider making slight modifications based on your
-            specific requirements. If you have a different data structure or
-            need additional functionality, please provide more details about the
-            specific changes or features you're looking for, and I'll be happy
-            to help you modify the code accordingly.
-          </p>
-        </div>
-      </div>
+        ))}
+      </center>
     </div>
   );
 };
 
-export default Home;
+export default Bookmarks;

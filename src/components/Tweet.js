@@ -4,7 +4,7 @@ import axios from "axios";
 import TweetPost from "./TweetPost";
 
 const Tweet = () => {
-      const { isAuthenticated, user } = useAuth0();
+      const { isAuthenticated, user, loginWithRedirect } = useAuth0();
       const [profileData, setProfileData] = useState(null);
       const [tweetText, setTweetText] = useState("");
       const [tweets, setTweets] = useState([]);
@@ -19,16 +19,28 @@ const Tweet = () => {
       const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
       const [followStatus, setFollowStatus] = useState({});
 
-      const handleTweetButtonClick = () => {
+  const handleTweetButtonClick = () => {
+              if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
         setIsTweetPostVisible(!isTweetPostVisible);
       };
 
-      const handleSubscribeClick = () => {
+  const handleSubscribeClick = () => {
+        if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
         alert("feature coming soon!");
       };
 
       const handleLike = async (tweetId) => {
         try {
+         if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
           const isLiked = likedTweets.includes(tweetId);
           const method = isLiked ? "DELETE" : "POST";
 
@@ -56,6 +68,10 @@ const Tweet = () => {
 
       const handleBookmark = async (tweetId) => {
         try {
+         if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
           const isBookmarked = bookmarkedTweets.includes(tweetId);
           const method = isBookmarked ? "DELETE" : "POST";
 
@@ -89,6 +105,10 @@ const Tweet = () => {
 
       const handleFollow = async (followingId, followingUsername) => {
         try {
+        if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
           const isFollowing = followStatus[followingId];
           const method = isFollowing ? "DELETE" : "POST";
 
@@ -280,6 +300,10 @@ const Tweet = () => {
 
       const postTweet = async () => {
         try {
+                if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
           // Use navigator.geolocation to get the user's current location
           let location = null;
           if (navigator.geolocation && useLocation) {
@@ -324,6 +348,10 @@ const Tweet = () => {
 
       const handleDeleteTweet = async (tweetId) => {
         try {
+                if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
           const response = await fetch("/api/tweet", {
             method: "DELETE",
             headers: {
@@ -383,6 +411,10 @@ const Tweet = () => {
 
       const postReply = async (tweetId) => {
         try {
+                if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
           const response = await fetch("/api/reply", {
             method: "POST",
             headers: {

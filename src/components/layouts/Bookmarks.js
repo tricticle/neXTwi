@@ -5,7 +5,7 @@ import axios from "axios";
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [tweetText, setTweetText] = useState("");
   const [tweets, setTweets] = useState([]);
@@ -20,15 +20,27 @@ const Bookmarks = () => {
   const [followStatus, setFollowStatus] = useState({});
 
   const handleTweetButtonClick = () => {
+          if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
     setIsTweetPostVisible(!isTweetPostVisible);
   };
 
   const handleSubscribeClick = () => {
+          if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
     alert("feature coming soon!");
   };
 
   const handleLike = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const isLiked = likedTweets.includes(tweetId);
       const method = isLiked ? "DELETE" : "POST";
 
@@ -56,6 +68,10 @@ const Bookmarks = () => {
 
   const handleBookmark = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const isBookmarked = bookmarkedTweets.includes(tweetId);
       const method = isBookmarked ? "DELETE" : "POST";
 
@@ -87,6 +103,10 @@ const Bookmarks = () => {
 
   const handleFollow = async (followingId, followingUsername) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const isFollowing = followStatus[followingId];
       const method = isFollowing ? "DELETE" : "POST";
 
@@ -241,6 +261,10 @@ const Bookmarks = () => {
 
   const postTweet = async () => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       // Use navigator.geolocation to get the user's current location
       let location = null;
       if (navigator.geolocation && useLocation) {
@@ -282,6 +306,10 @@ const Bookmarks = () => {
 
   const handleDeleteTweet = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const response = await fetch("/api/tweet", {
         method: "DELETE",
         headers: {
@@ -341,6 +369,10 @@ const Bookmarks = () => {
 
   const postReply = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const response = await fetch("/api/reply", {
         method: "POST",
         headers: {
@@ -435,19 +467,44 @@ const fetchBookmarks = () => {
   }
 };
 
-const fetchBookmarkedTweets = () => {
-  if (profileData && profileData._id && bookmarks.length > 0) {
-    const tweetIds = bookmarks.map((bookmark) => bookmark.tweet_id);
-    return fetch(`/api/tweet?tweet_ids=${tweetIds.join(",")}`)
-      .then((res) => res.json())
-      .then((data) =>
-        setBookmarkedTweets(
-          data.filter((tweet) => tweetIds.includes(tweet._id))
-        )
-      )
-      .catch((error) =>
-        console.error("Error fetching bookmarked tweets:", error)
+const fetchBookmarkedTweets = async () => {
+  try {
+    if (profileData && profileData._id && bookmarks.length > 0) {
+      const tweetIds = bookmarks.map((bookmark) => bookmark.tweet_id);
+      const response = await fetch(
+        `/api/tweet?tweet_ids=${tweetIds.join(",")}`
       );
+
+      if (response.ok) {
+        const tweets = await response.json();
+
+        // Filter only the bookmarked tweets
+        const bookmarkedTweets = tweets.filter((tweet) =>
+          tweetIds.includes(tweet._id)
+        );
+
+        // Fetch profile information for each bookmarked tweet
+        const tweetsWithProfile = await Promise.all(
+          bookmarkedTweets.map(async (tweet) => {
+            const profileResponse = await fetch(
+              `/api/profile?id=${tweet.profile_id}`
+            );
+            const profileData = await profileResponse.json();
+            return {
+              ...tweet,
+              avatar: profileData.avatar,
+              username: profileData.username,
+            };
+          })
+        );
+
+        setBookmarkedTweets(tweetsWithProfile);
+      } else {
+        console.error("Error fetching bookmarked tweets:", response.statusText);
+      }
+    }
+  } catch (error) {
+    console.error("Error:", error);
   }
 };
 
@@ -463,8 +520,7 @@ useEffect(() => {
 
 
   return (
-    <div className="App">
-      <center>
+    <div className="contai">
         {bookmarkedTweets.map((tweet) => (
           <div className="tweet" key={tweet._id}>
             <div className="tweet" key={tweet._id}>
@@ -591,7 +647,6 @@ useEffect(() => {
             </div>
           </div>
         ))}
-      </center>
     </div>
   );
 };

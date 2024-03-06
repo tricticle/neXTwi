@@ -106,11 +106,6 @@ body::-webkit-scrollbar {
   color: transparent;
 }
 
-.popup-content::-webkit-scrollbar {
-  display: none;
-  color: transparent;
-}
-
 .wrapper{
   position: fixed;
   top: 0;
@@ -583,19 +578,33 @@ input[type="checkbox"]:checked {
   border-radius: 7px;
 }
 
+.tweet-post input[type="text"]{
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .tweet-post textarea{
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  line-height: 70px;
-  text-wrap: wrap;
-  border-radius: 7px;
-  border: none;
-  outline: none;
+  width: 100%;
+  height: 80px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
   box-shadow: 0px 7px 20px 5px rgba(0, 0, 0, 0.1);
-  resize: none;
+  outline: none;
+}
+
+.tweet-post textarea::-webkit-scrollbar {
+  width: 7px;
+}
+
+.tweet-post textarea::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 20px;
 }
 
 .tweet-post .location{

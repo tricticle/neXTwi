@@ -40,6 +40,7 @@ const Profile = ({ profileId }) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMenuOpen]);
+  
   return (
     <div>
       <div className="profile">

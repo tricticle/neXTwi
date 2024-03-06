@@ -7,7 +7,7 @@ import TweetPost from "./TweetPost";
 import { Outlet } from "react-router-dom";
 
 const Home = () => {
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [tweetText, setTweetText] = useState("");
   const [tweets, setTweets] = useState([]);
@@ -23,6 +23,10 @@ const Home = () => {
   const [followStatus, setFollowStatus] = useState({});
 
   const handleTweetButtonClick = () => {
+          if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
     setIsTweetPostVisible(!isTweetPostVisible);
   };
 
@@ -32,6 +36,10 @@ const Home = () => {
 
   const handleLike = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const isLiked = likedTweets.includes(tweetId);
       const method = isLiked ? "DELETE" : "POST";
 
@@ -59,6 +67,10 @@ const Home = () => {
 
   const handleBookmark = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const isBookmarked = bookmarkedTweets.includes(tweetId);
       const method = isBookmarked ? "DELETE" : "POST";
 
@@ -90,6 +102,11 @@ const Home = () => {
 
   const handleFollow = async (followingId, followingUsername) => {
     try {
+       if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
+
       const isFollowing = followStatus[followingId];
       const method = isFollowing ? "DELETE" : "POST";
 
@@ -272,6 +289,10 @@ const Home = () => {
 
   const postTweet = async () => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       // Use navigator.geolocation to get the user's current location
       let location = null;
       if (navigator.geolocation && useLocation) {
@@ -372,6 +393,10 @@ const Home = () => {
 
   const postReply = async (tweetId) => {
     try {
+            if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
       const response = await fetch("/api/reply", {
         method: "POST",
         headers: {

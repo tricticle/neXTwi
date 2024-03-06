@@ -10,6 +10,10 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
 
   const handleOptionClick = (option) => {
+          if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
     setActiveOption(option === activeOption ? null : option);
   };
 
@@ -145,14 +149,6 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
         >
           <span className="material-icons">bookmark_border</span>
           <h2>Bookmarks</h2>
-        </Link>
-        <Link
-          to="/Likes"
-          className={`sidebarOption ${isActive("lists")}`}
-          onClick={() => handleOptionClick("lists")}
-        >
-          <span className="material-icons">favorite_border</span>
-          <h2>Likes</h2>
         </Link>
         <Link
           to="/Profile"

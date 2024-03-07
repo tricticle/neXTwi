@@ -1,63 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const Admin = ({ profileId, onTweetButtonClick, onSomeClick }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+const Admin = () => {
+  const { isAuthenticated, user } = useAuth0();
   const [adminData, setAdminData] = useState(null);
-  const [activeOption, setActiveOption] = useState(null);
-  const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
 
-  const handleOptionClick = (option) => {
-    setActiveOption(option === activeOption ? null : option);
-  };
-
-  const isActive = (option) => {
-    return option === activeOption ? "active" : "";
-  };
-
-  const toggleTweetPost = () => {
-    setIsTweetPostVisible(!isTweetPostVisible);
-    onTweetButtonClick("Tweet button clicked in Header");
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMenuOpen && !event.target.closest(".menu-btn")) {
-        closeMenu();
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isMenuOpen) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [isMenuOpen]);
-
-  const handleAdmin = async () => {
+  const fetchAdminData = async () => {
     try {
       const response = await fetch("/api/profile", {
         method: "GET",
@@ -78,6 +26,13 @@ const Admin = ({ profileId, onTweetButtonClick, onSomeClick }) => {
     }
   };
 
+  useEffect(() => {
+    // Fetch admin data when component mounts
+    if (isAuthenticated && user.name === "tricticle") {
+      fetchAdminData();
+    }
+  }, [isAuthenticated, user.name]); // Fetch data when authentication status or username changes
+
   const handleDeleteProfile = async (username, profileId) => {
     try {
       const response = await fetch(`/api/profile?id=${profileId}`, {
@@ -92,7 +47,7 @@ const Admin = ({ profileId, onTweetButtonClick, onSomeClick }) => {
 
       if (response.ok) {
         console.log("Profile deleted successfully");
-        handleAdmin(); // Reload admin data after deletion
+        fetchAdminData(); // Reload admin data after deletion
       } else {
         console.error("Failed to delete profile");
       }
@@ -100,36 +55,36 @@ const Admin = ({ profileId, onTweetButtonClick, onSomeClick }) => {
       console.error("Error:", error);
     }
   };
+
   return (
-    <div className="profile">
-      <div className="menu-btn">
-        {isAuthenticated && user.name === "tricticle" && (
-          <div className="admin-section">
-            <button onClick={handleAdmin}>AdminUser</button>
-            {adminData && (
-              <div className="admin-data">
-                <h3>Admin Data</h3>
-                {adminData.map((adminProfile) => (
-                  <h4 key={adminProfile._id}>
-                    {adminProfile.username}{" "}
-                    <button
-                      onClick={() =>
-                        handleDeleteProfile(
-                          adminProfile.username,
-                          adminProfile._id
-                        )
-                      }
-                    >
-                      Delete Profile
-                    </button>
-                  </h4>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      {isAuthenticated && user.name === "tricticle" && (
+        <div className="admin-section">
+          {adminData && (
+            <div className="ad-man">
+              {adminData.map((adminProfile) => (
+                <div key={adminProfile._id} className="admin-profile">
+                  <img src={adminProfile.avatar} alt={adminProfile.username} />
+                  <div className="u-info">
+                    <h3>{adminProfile.username}</h3>
+                                      <button
+                    onClick={() =>
+                      handleDeleteProfile(
+                        adminProfile.username,
+                        adminProfile._id
+                      )
+                    }
+                  >
+                    Delete Profile
+                  </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 

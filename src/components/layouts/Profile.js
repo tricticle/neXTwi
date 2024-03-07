@@ -1,73 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Profile = ({ profileId }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMenuOpen && !event.target.closest(".menu-btn")) {
-        closeMenu();
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isMenuOpen) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [isMenuOpen]);
+  const { isAuthenticated, user } = useAuth0();
   
   return (
-    <div>
-      <div className="profile">
-        <div className="menu-btn">
-          {isAuthenticated ? (
-            <div className="profile">
+    <div className="profile-container">
+      <div className="p-back">
+        <img src="./assets/p-back.png" alt="background" />
+      </div>
+          {isAuthenticated && (
+            <div className="profi">
               <img
                 loading="lazy"
                 src={user.picture}
                 alt={user.name}
-                onClick={toggleMenu}
-              />
+          />
+          <div className="padj">
+                          <div className="u-info">
               <h4>{user.name}!</h4>
-              <div className={`dropdown ${isMenuOpen ? "open" : ""}`}>
-                <h4>{profileId}</h4>
-                <h4 className="link">
-                  <a href="https://zaap.bio/tricticle">about us</a>
-                </h4>
-                <button onClick={() => logout()}>Log Out</button>
-              </div>
+            <h4>{profileId}</h4>
+          </div>
+          <div className="u-info">
+            <a href="https://myaccount.google.com/profile"><i class="fas fa-pen"></i>edit Profile</a>
+          </div>
+          </div>
             </div>
-          ) : (
-            <button onClick={() => loginWithRedirect()}>Log In</button>
           )}
-        </div>
-      </div>
-      <a href="https://myaccount.google.com/profile">edit proffile</a>
     </div>
   );
 };

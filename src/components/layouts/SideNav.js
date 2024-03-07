@@ -183,35 +183,7 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
               <h4>{user.name}!</h4>
               <div className={`dropdown ${isMenuOpen ? "open" : ""}`}>
                 <h4>{profileId}</h4>
-                <h4 className="link">
-                  <a href="https://zaap.bio/tricticle">about us</a>
-                </h4>
                 <button onClick={() => logout()}>Log Out</button>
-                {isAuthenticated && user.name === "tricticle" && (
-                  <div className="admin-section">
-                    <button onClick={handleAdmin}>AdminUser</button>
-                    {adminData && (
-                      <div className="admin-data">
-                        <h3>Admin Data</h3>
-                        {adminData.map((adminProfile) => (
-                          <h4 key={adminProfile._id}>
-                            {adminProfile.username}{" "}
-                            <button
-                              onClick={() =>
-                                handleDeleteProfile(
-                                  adminProfile.username,
-                                  adminProfile._id
-                                )
-                              }
-                            >
-                              Delete Profile
-                            </button>
-                          </h4>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
           ) : (

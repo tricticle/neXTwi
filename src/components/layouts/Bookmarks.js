@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 
 const Bookmarks = () => {
@@ -520,7 +520,7 @@ useEffect(() => {
 
 
   return (
-    <div className="contai">
+    <div className="tweet-grid">
         {bookmarkedTweets.map((tweet) => (
           <div className="tweet" key={tweet._id}>
             <div className="tweet" key={tweet._id}>

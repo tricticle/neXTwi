@@ -1,6 +1,6 @@
 // api/profile.js
 const mongoose = require('mongoose');
-const { Profile, Tweet } = require('./database');
+const { Profile, Tweet, Reply } = require('./database');
 const axios = require('axios');
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -22,7 +22,6 @@ module.exports = async (req, res) => {
       res.status(201).json({ message: 'Profile added successfully' });
     } else if (req.method === 'GET') {
       if (req.query.id || req.query.username) {
-        // Fetch profile by ID or username
         const query = req.query.id ? { _id: req.query.id } : { username: req.query.username };
         const userProfile = await Profile.findOne(query, '-__v').lean();
 
@@ -47,11 +46,8 @@ module.exports = async (req, res) => {
     } else if (req.method === 'DELETE') {
       if (req.query.id) {
         const userId = req.query.id;
-
-        // Delete tweets posted by the user
         const deletedTweets = await Tweet.deleteMany({ profile_id: new mongoose.Types.UUID(userId) });
-
-        // Delete the user profile
+         const deletedReply = await Reply.deleteMany({ user_id: new mongoose.Types.UUID(userId) });
         const deletedProfile = await Profile.findByIdAndDelete(userId);
 
         if (deletedProfile) {
@@ -62,7 +58,8 @@ module.exports = async (req, res) => {
               username: deletedProfile.username,
               avatar: deletedProfile.avatar,
             },
-            deletedTweets: deletedTweets.deletedCount, // Number of deleted tweets
+            deletedTweets: deletedTweets.deletedCount,
+            deletedReply: deletedReply.deletedCount,
           });
         } else {
           res.status(404).json({ error: 'Profile not found' });

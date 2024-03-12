@@ -16,18 +16,18 @@ const profileSchema = new mongoose.Schema({
     profile_id: { type: mongoose.Schema.Types.UUID, required: true },
     created_at: { type: Date, required: true },
     updated_at: { type: Date, required: true },
-    hashtags: [{ type: String }], // Array of hashtag strings
+    hashtags: [{ type: String }],
     location: {
       type: {
         type: String,
-        enum: ['Point'], // Enable only 'Point' type for geolocation
+        enum: ['Point'],
         default: 'Point',
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
-        index: '2dsphere', // Create a 2dsphere index for geolocation queries
+        type: [Number],
+        index: '2dsphere',
       },
-      placeName: String, // New field to store the place name
+      placeName: String,
     },
   });
   
@@ -95,6 +95,6 @@ const profileSchema = new mongoose.Schema({
     TweetHashtag,
     Bookmark,
     Reply,
-    Follow, // Add the Follow model to the exports
+    Follow,
   };
   

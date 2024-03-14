@@ -3,8 +3,6 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import SideNav from "./layouts/SideNav";
 import SearchResults from "./layouts/SearchResults";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Outlet } from "react-router-dom";
 
 const Home = () => {
@@ -322,15 +320,6 @@ const Home = () => {
 
       if (response.ok) {
         console.log("Tweet posted successfully");
-        toast.success("Tweet posted successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
         fetchTweets();
         setTweetText("");
         setHashtags("");
@@ -501,7 +490,6 @@ const Home = () => {
       />
       <div className="post-section">
         <Outlet />
-        <ToastContainer />
         <div className="tps">
           {isTweetPostVisible && (
             <div className="tweet-post">

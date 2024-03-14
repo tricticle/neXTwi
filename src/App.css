@@ -377,6 +377,16 @@ body::-webkit-scrollbar {
   gap: 17px;
 }
 
+.twee-map{
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px;
+  gap: 17px;
+}
+
 .tweet {
   position: relative;
   display: flex;

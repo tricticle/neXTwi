@@ -12,14 +12,29 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'POST') {
       const { username, avatar } = req.body;
-      const profile = new Profile({
-        _id: new mongoose.Types.UUID(),
-        updated_at: new Date(),
-        username,
-        avatar,
-      });
-      await profile.save();
-      res.status(201).json({ message: 'Profile added successfully' });
+
+      // Input validation (optional but recommended)
+      if (!username) {
+        return res.status(400).json({ error: 'Missing required field: username' });
+      }
+
+      // Find the profile or create a new one
+      let profile = await Profile.findOne({ username });
+      if (!profile) {
+        profile = new Profile({
+          _id: new mongoose.Types.UUID(),
+          updated_at: new Date(),
+          username,
+        });
+      }
+
+      // Update avatar only if a new URL is provided
+      if (avatar) {
+        profile.avatar = avatar;
+        await profile.save();
+      }
+
+      res.status(201).json({ message: 'Profile added/updated successfully', profile });
     } else if (req.method === 'GET') {
       if (req.query.id || req.query.username) {
         const query = req.query.id ? { _id: req.query.id } : { username: req.query.username };

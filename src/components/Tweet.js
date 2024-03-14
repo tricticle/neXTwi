@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import TweetPost from "./TweetPost";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Tweet = () => {
       const { isAuthenticated, user, loginWithRedirect } = useAuth0();
@@ -57,6 +59,15 @@ const Tweet = () => {
 
           if (response.ok) {
             console.log(`Tweet ${isLiked ? "unliked" : "liked"} successfully`);
+            toast.success(`Tweet ${isLiked ? "unliked" : "liked"} successfully`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             fetchLikes();
           } else {
             console.error(`Failed to ${isLiked ? "unlike" : "like"} tweet`);
@@ -92,6 +103,15 @@ const Tweet = () => {
                 isBookmarked ? "unbookmarked" : "bookmarked"
               } successfully`
             );
+        toast.success(`Tweet ${isBookmarked ? "unbookmarked" : "bookmarked"} successfully`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             fetchBookmarks();
           } else {
             console.error(
@@ -131,6 +151,15 @@ const Tweet = () => {
             console.log(
               `User ${isFollowing ? "unfollowed" : "followed"} successfully`
             );
+            toast.success( `User ${isFollowing ? "unfollowed" : "followed"} successfully`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             setFollowStatus((prevStatus) => ({
               ...prevStatus,
               [followingId]: newFollowStatus,
@@ -283,6 +312,15 @@ const Tweet = () => {
               setProfileData(profileData);
               console.log("Profile ID:", profileData._id);
               console.log("Profile added successfully");
+              toast.success("welcome", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             } else {
               console.error("Profile username does not match Auth0 user name");
             }
@@ -334,7 +372,15 @@ const Tweet = () => {
           });
 
           if (response.ok) {
-            console.log("Tweet posted successfully");
+toast.success("Tweet posted successfully", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             fetchTweets();
             setTweetText("");
             setHashtags("");
@@ -364,6 +410,15 @@ const Tweet = () => {
 
           if (response.ok) {
             console.log("Tweet deleted successfully");
+            toast.success("Tweet deleted successfully", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             fetchTweets();
           } else {
             console.error("Failed to delete tweet");
@@ -429,6 +484,15 @@ const Tweet = () => {
 
           if (response.ok) {
             console.log("Reply posted successfully");
+            toast.success("reply posted successfully", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
             fetchReplies();
             setReplyText("");
           } else {
@@ -486,25 +550,28 @@ const Tweet = () => {
         }
       }, [isAuthenticated, user]);
 
-      useEffect(() => {
-        if (profileData && profileData._id) {
-          fetchLikes();
-          fetchBookmarks();
-          tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
-        }
-      }, [profileData]);
+  useEffect(() => {
+    if (profileData && profileData._id) {
+      fetchLikes();
+      fetchBookmarks();
+      tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
+    }
+  }, [profileData]);
 
-      useEffect(() => {
-        if (profileData && profileData._id) {
-          tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
-        }
-      }, [tweets]);
+  useEffect(() => {
+    if (profileData && profileData._id) {
+      tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
+    }
+  }, [tweets]);
+
 
   return (
     <div className="container">
       <div className="post-section">
         <div className="tweet-grid">
           <TweetPost />
+                <ToastContainer />
+          <div className="twee-map">
           {tweets.map((tweet) => (
             <div className="tweet" key={tweet._id}>
               <div className="opos">
@@ -629,6 +696,7 @@ const Tweet = () => {
               })}
             </div>
           ))}
+          </div>
         </div>
         <div className="tps">
           {isTweetPostVisible && (

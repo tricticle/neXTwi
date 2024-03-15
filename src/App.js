@@ -68,9 +68,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />}>
-          <Route index element={<Tweet />} />
-          <Route path="home" element={<Tweet />} />
+        <Route path="/" element={<Home profileId={profileData ? profileData._id : null}/>}>
+          <Route index element={<Tweet profileId={profileData ? profileData._id : null}/>} />
+          <Route path="home" element={<Tweet profileId={profileData ? profileData._id : null}/>} />
           <Route path="explore" element={<SearchResults />} />
           <Route path="Admin" element={<Admin />} />
           <Route path="Bookmarks" element={<Bookmarks />} />

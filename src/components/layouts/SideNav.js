@@ -109,7 +109,9 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
   return (
     <div className="sidebar">
       <div className="sidebar-menu">
-        <i className="fab fa-twitter"></i>
+        <Link to="/">
+          <i className="fab fa-twitter"></i>
+        </Link>
         <Link
           to="/home"
           className={`sidebarOption ${isActive("home")}`}
@@ -127,22 +129,6 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <h2>Explore</h2>
         </Link>
         <Link
-          to="/Notifications"
-          className={`sidebarOption ${isActive("notifications")}`}
-          onClick={() => handleOptionClick("notifications") || onSomeClick()}
-        >
-          <span className="material-icons">notifications_none</span>
-          <h2>Notifications</h2>
-        </Link>
-        <Link
-          to="/Messages"
-          className={`sidebarOption ${isActive("messages")}`}
-          onClick={() => handleOptionClick("messages") || onSomeClick()}
-        >
-          <span className="material-icons">mail_outline</span>
-          <h2>Messages</h2>
-        </Link>
-        <Link
           to="/Bookmarks"
           className={`sidebarOption ${isActive("bookmarks")}`}
           onClick={() => handleOptionClick("bookmarks")}
@@ -158,17 +144,20 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <span className="material-icons">perm_identity</span>
           <h2>Profile</h2>
         </Link>
-        <Link
+          {isAuthenticated &&
+          (user.name === "tricticle") && (
+<>        <Link
           to="/Admin"
           className={`sidebarOption ${isActive("Admin")}`}
           onClick={() => handleOptionClick("Admin")}
-        >
-          <span className="material-icons">more_horiz</span>
+          >
+          <span class="material-symbols-outlined">admin_panel_settings</span>
           <h2>admin</h2>
         </Link>
         <button className="sidebar__tweet" onClick={toggleTweetPost}>
           Tweet
-        </button>
+        </button></>
+        )}
       </div>
       <div className="profile">
         <div className="menu-btn">

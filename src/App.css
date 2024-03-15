@@ -236,7 +236,6 @@ body::-webkit-scrollbar {
   display: flex;
   position: absolute;
   bottom: 69px;
-  right: 10px;
   background-color: var(--background-color);
   color: var(--text-color);
   border-radius: 4px;
@@ -245,10 +244,9 @@ body::-webkit-scrollbar {
   z-index: 1;
   flex-direction: column;
   flex-wrap: nowrap;
-  align-items: center;
-  justify-content: center;
   align-content: center;
   gap: 2px;
+  justify-content: center;
 }
 
 .menu-btn button:hover {
@@ -835,9 +833,13 @@ input[type="checkbox"]:checked {
   flex-direction: column;
 }
 
-.fab {
+.fab{
   display: flex;
   justify-content: center;
+}
+
+a{
+  text-decoration: none;
 }
 
 .fa-twitter {
@@ -856,6 +858,7 @@ input[type="checkbox"]:checked {
 }
 
 .sidebarOption .material-icons,
+.material-symbols-outlined,
 .fa-twitter {
   padding: 20px;
 }

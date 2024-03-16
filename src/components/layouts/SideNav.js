@@ -154,10 +154,11 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <span class="material-symbols-outlined">admin_panel_settings</span>
           <h2>admin</h2>
         </Link>
-        <button className="sidebar__tweet" onClick={toggleTweetPost}>
+          </>
+          )}
+          <button className="sidebar__tweet" onClick={toggleTweetPost}>
           Tweet
-        </button></>
-        )}
+          </button>
       </div>
       <div className="profile">
         <div className="menu-btn">

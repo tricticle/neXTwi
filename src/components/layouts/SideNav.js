@@ -128,6 +128,14 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <span className="material-icons">search</span>
           <h2>Explore</h2>
         </Link>
+          <Link
+          to="/Like"
+          className={`sidebarOption ${isActive("like")}`}
+          onClick={() => handleOptionClick("like")}
+        >
+          <span class="material-symbols-outlined">favorite</span>
+          <h2>Likes</h2>
+        </Link>
         <Link
           to="/Bookmarks"
           className={`sidebarOption ${isActive("bookmarks")}`}

@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import SearchResults from "./layouts/SearchResults";
 import { Outlet } from "react-router-dom";
 
-const Home = ({ profileId }) => {
+const Home = () => {
   const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [tweetText, setTweetText] = useState("");
@@ -528,7 +528,9 @@ const Home = ({ profileId }) => {
         </div>
       </div>
       <div className="widgets">
+        <div className="ds-none">
         <SearchResults />
+        </div>
         <div className="widgets__widgetContainer">
           <h2>Subscribe to Premium</h2>
           <p>

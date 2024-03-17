@@ -311,15 +311,6 @@ const Profile = ({ profileId }) => {
               setProfileData(profileData);
               console.log("Profile ID:", profileData._id);
               console.log("Profile added successfully");
-              toast.success("welcome", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
             } else {
               console.error("Profile username does not match Auth0 user name");
             }

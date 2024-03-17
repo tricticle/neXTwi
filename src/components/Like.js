@@ -4,7 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Bookmark = ({ profileId }) => {
+const Like = ({ profileId }) => {
       const { isAuthenticated, user, loginWithRedirect } = useAuth0();
       const [profileData, setProfileData] = useState(null);
       const [tweetText, setTweetText] = useState("");
@@ -558,7 +558,7 @@ toast.success("Tweet posted successfully", {
           <div className="tweet-grid">
           <div className="twee-map">
             {tweets
-              .filter((tweet) => bookmarkedTweets.includes(tweet._id))
+              .filter((tweet) => likedTweets.includes(tweet._id))
               .map((tweet) => (
             <div className="tweet" key={tweet._id}>
               <div className="opos">
@@ -690,4 +690,4 @@ toast.success("Tweet posted successfully", {
   );
 };
 
-export default Bookmark;
+export default Like;

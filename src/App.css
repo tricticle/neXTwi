@@ -588,10 +588,9 @@ i {
 
 .post-section {
   text-align: center;
-  margin: 3px;
   width: 100%;
   min-width: 300px;
-  /* Set width to 100% to cover the maximum size */
+  border-inline: 1px solid var(--side-color);
 }
 
 .tps {
@@ -821,7 +820,6 @@ input[type="checkbox"]:checked {
   flex-wrap: nowrap;
   justify-content: space-between;
   max-height: 100dvh;
-  border-right: 3px solid var(--side-color);
 }
 
 .sidebar .profile {
@@ -914,6 +912,14 @@ a{
   .profile h4 {
     display: none;
   }
+
+  .ds-none, .explore .widgets__input, .widgets__widgetContainer{
+    display: none;
+  }
+    
+.post-section .ds-none, .explore .widgets__input {
+      display: flex;
+    }
 }
 
 .explore {
@@ -933,7 +939,6 @@ a{
   align-items: center;
   gap: 30px;
   height: 100dvh;
-  border-left: 3px solid var(--side-color);
 }
 
 .widgets__widgetContainer {

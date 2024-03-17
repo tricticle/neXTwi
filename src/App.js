@@ -7,6 +7,7 @@ import SearchResults from "./components/layouts/SearchResults";
 import Tweet from "./components/Tweet";
 import Admin from "./components/layouts/Admin";
 import Bookmarks from "./components/layouts/Bookmarks";
+import Like from "./components/Like";
 import Profile from "./components/layouts/Profile";
 
 function App() {
@@ -68,11 +69,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home profileId={profileData ? profileData._id : null}/>}>
-          <Route index element={<Tweet profileId={profileData ? profileData._id : null}/>} />
-          <Route path="home" element={<Tweet profileId={profileData ? profileData._id : null}/>} />
+        <Route path="/" element={<Home />}>
+          <Route index element={<Tweet />} />
+          <Route path="home" element={<Tweet />} />
           <Route path="explore" element={<SearchResults />} />
-          <Route path="Admin" element={<Admin />} />
+          <Route path="Like" element={<Like />} />
           <Route path="Bookmarks" element={<Bookmarks />} />
           <Route
             path="Profile"
@@ -80,6 +81,7 @@ function App() {
               <Profile profileId={profileData ? profileData._id : null} />
             }
           />
+          <Route path="Admin" element={<Admin />} />
         </Route>
       </Routes>
     </BrowserRouter>

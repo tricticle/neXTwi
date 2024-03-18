@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import TweetPost from "./TweetPost";
 import { ToastContainer, toast } from "react-toastify";
@@ -15,24 +15,7 @@ const Tweet = () => {
       const [likedTweets, setLikedTweets] = useState([]);
       const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
       const [showOptions, setShowOptions] = useState(null);
-      const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
       const [followStatus, setFollowStatus] = useState({});
-
-  const handleTweetButtonClick = () => {
-              if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-        setIsTweetPostVisible(!isTweetPostVisible);
-      };
-
-  const handleSubscribeClick = () => {
-        if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-        alert("feature coming soon!");
-      };
 
       const handleLike = async (tweetId) => {
         try {
@@ -484,14 +467,12 @@ const Tweet = () => {
         fetchTweets();
       }, []);
   
-  useEffect(() => {
-  const interval = setInterval(() => {
-    fetchTweets();
-  }, 10000); // 10 seconds interval
-
-  // Cleanup function to clear the interval on component unmount
-  return () => clearInterval(interval);
-}, []);
+       useEffect(() => {
+       const interval = setInterval(() => {
+        fetchTweets();
+      }, 10000); 
+      return () => clearInterval(interval);
+      }, []);
 
       useEffect(() => {
         if (isAuthenticated) {
@@ -520,7 +501,7 @@ const Tweet = () => {
       <div className="post-section">
         <div className="tweet-grid">
           <TweetPost />
-                <ToastContainer />
+          <ToastContainer />
           <div className="twee-map">
           {tweets.map((tweet) => (
             <div className="tweet" key={tweet._id}>

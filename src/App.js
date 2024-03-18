@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
@@ -9,8 +9,6 @@ import Admin from "./components/layouts/Admin";
 import Bookmarks from "./components/layouts/Bookmarks";
 import Like from "./components/Like";
 import Profile from "./components/layouts/Profile";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { isAuthenticated, user } = useAuth0();
@@ -69,7 +67,6 @@ function App() {
 
   return (
     <BrowserRouter>
-      <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />}>
           <Route index element={<Tweet />} />

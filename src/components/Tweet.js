@@ -8,15 +8,12 @@ import "react-toastify/dist/ReactToastify.css";
 const Tweet = () => {
       const { isAuthenticated, user, loginWithRedirect } = useAuth0();
       const [profileData, setProfileData] = useState(null);
-      const [tweetText, setTweetText] = useState("");
       const [tweets, setTweets] = useState([]);
       const [replyText, setReplyText] = useState("");
       const [selectedTweetId, setSelectedTweetId] = useState(null);
       const [repliesTweets, setRepliesTweets] = useState([]);
       const [likedTweets, setLikedTweets] = useState([]);
       const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
-      const [hashtags, setHashtags] = useState("");
-      const [useLocation, setUseLocation] = useState(false);
       const [showOptions, setShowOptions] = useState(null);
       const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
       const [followStatus, setFollowStatus] = useState({});
@@ -336,62 +333,6 @@ const Tweet = () => {
         }
       };
 
-      const postTweet = async () => {
-        try {
-                if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-          // Use navigator.geolocation to get the user's current location
-          let location = null;
-          if (navigator.geolocation && useLocation) {
-            const position = await new Promise((resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(resolve, reject);
-            });
-
-            location = {
-              type: "Point",
-              coordinates: [
-                position.coords.longitude,
-                position.coords.latitude,
-              ],
-            };
-          }
-
-          const response = await fetch("/api/tweet", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text: tweetText,
-              profile_id: profileData._id,
-              hashtags: hashtags.split(/[\s,]+/).filter((tag) => tag !== ""), // Extract hashtags from input
-              location, // Include the user's location if available
-            }),
-          });
-
-          if (response.ok) {
-toast.success("Tweet posted successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-            fetchTweets();
-            setTweetText("");
-            setHashtags("");
-          } else {
-            console.error("Failed to post tweet");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      };
-
       const handleDeleteTweet = async (tweetId) => {
         try {
                 if (!isAuthenticated) {
@@ -542,6 +483,15 @@ toast.success("Tweet posted successfully", {
       useEffect(() => {
         fetchTweets();
       }, []);
+  
+  useEffect(() => {
+  const interval = setInterval(() => {
+    fetchTweets();
+  }, 10000); // 10 seconds interval
+
+  // Cleanup function to clear the interval on component unmount
+  return () => clearInterval(interval);
+}, []);
 
       useEffect(() => {
         if (isAuthenticated) {
@@ -697,32 +647,6 @@ toast.success("Tweet posted successfully", {
             </div>
           ))}
           </div>
-        </div>
-        <div className="tps">
-          {isTweetPostVisible && (
-            <div className="tweet-post">
-              <textarea
-                placeholder="What's happening?"
-                value={tweetText}
-                onChange={(e) => setTweetText(e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Add hashtags"
-                value={hashtags}
-                onChange={(e) => setHashtags(e.target.value)}
-              />
-              <div className="location">
-                <input
-                  type="checkbox"
-                  checked={useLocation}
-                  onChange={() => setUseLocation(!useLocation)}
-                />
-                location
-              </div>
-              <button onClick={postTweet}>Tweet</button>
-            </div>
-          )}
         </div>
       </div>
     </div>

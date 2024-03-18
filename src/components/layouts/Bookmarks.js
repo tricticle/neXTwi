@@ -1,40 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Bookmark = ({ profileId }) => {
       const { isAuthenticated, user, loginWithRedirect } = useAuth0();
       const [profileData, setProfileData] = useState(null);
-      const [tweetText, setTweetText] = useState("");
       const [tweets, setTweets] = useState([]);
       const [replyText, setReplyText] = useState("");
       const [selectedTweetId, setSelectedTweetId] = useState(null);
       const [repliesTweets, setRepliesTweets] = useState([]);
       const [likedTweets, setLikedTweets] = useState([]);
       const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
-      const [hashtags, setHashtags] = useState("");
-      const [useLocation, setUseLocation] = useState(false);
       const [showOptions, setShowOptions] = useState(null);
-      const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
       const [followStatus, setFollowStatus] = useState({});
-
-  const handleTweetButtonClick = () => {
-              if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-        setIsTweetPostVisible(!isTweetPostVisible);
-      };
-
-  const handleSubscribeClick = () => {
-        if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-        alert("feature coming soon!");
-      };
 
       const handleLike = async (tweetId) => {
         try {
@@ -326,62 +306,6 @@ const Bookmark = ({ profileId }) => {
         }
       };
 
-      const postTweet = async () => {
-        try {
-                if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-          // Use navigator.geolocation to get the user's current location
-          let location = null;
-          if (navigator.geolocation && useLocation) {
-            const position = await new Promise((resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(resolve, reject);
-            });
-
-            location = {
-              type: "Point",
-              coordinates: [
-                position.coords.longitude,
-                position.coords.latitude,
-              ],
-            };
-          }
-
-          const response = await fetch("/api/tweet", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text: tweetText,
-              profile_id: profileData._id,
-              hashtags: hashtags.split(/[\s,]+/).filter((tag) => tag !== ""), // Extract hashtags from input
-              location, // Include the user's location if available
-            }),
-          });
-
-          if (response.ok) {
-toast.success("Tweet posted successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-            fetchTweets();
-            setTweetText("");
-            setHashtags("");
-          } else {
-            console.error("Failed to post tweet");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      };
-
       const handleDeleteTweet = async (tweetId) => {
         try {
                 if (!isAuthenticated) {
@@ -551,7 +475,7 @@ toast.success("Tweet posted successfully", {
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
   }, [tweets]);
-  
+
   return (
   <>
       <div className="post-section">

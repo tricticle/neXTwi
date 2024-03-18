@@ -9,6 +9,8 @@ import Admin from "./components/layouts/Admin";
 import Bookmarks from "./components/layouts/Bookmarks";
 import Like from "./components/Like";
 import Profile from "./components/layouts/Profile";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { isAuthenticated, user } = useAuth0();
@@ -51,23 +53,23 @@ function App() {
         }
       } else {
         console.error("Failed to add profile");
-        // Throw an error to trigger the catch block
         throw new Error("Failed to add profile");
       }
     } catch (error) {
       console.error("Error:", error);
-      // If an error occurs, run handleProfile
       await handleProfile();
     }
   };
 
-    useEffect(() => {
-      if (isAuthenticated) {
-        addProfile();
-      }
-    }, [isAuthenticated, user]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      addProfile();
+    }
+  }, [isAuthenticated, user]);
+
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />}>
           <Route index element={<Tweet />} />

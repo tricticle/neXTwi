@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import SideNav from "./layouts/SideNav";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import SearchResults from "./layouts/SearchResults";
 import { Outlet } from "react-router-dom";
 
@@ -10,16 +10,9 @@ const Home = () => {
   const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
   const [tweetText, setTweetText] = useState("");
-  const [tweets, setTweets] = useState([]);
-  const [replyText, setReplyText] = useState("");
-  const [repliesTweets, setRepliesTweets] = useState([]);
-  const [likedTweets, setLikedTweets] = useState([]);
-  const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
   const [hashtags, setHashtags] = useState("");
   const [useLocation, setUseLocation] = useState(false);
-  const [showOptions, setShowOptions] = useState(null);
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
-  const [followStatus, setFollowStatus] = useState({});
 
   const handleTweetButtonClick = () => {
           if (!isAuthenticated) {

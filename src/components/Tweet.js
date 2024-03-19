@@ -16,6 +16,16 @@ const Tweet = () => {
       const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
       const [showOptions, setShowOptions] = useState(null);
       const [followStatus, setFollowStatus] = useState({});
+      const [activeTab, setActiveTab] = useState('recentTweet');
+
+  const handleTabClick = (tab) => {
+             if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
+    setActiveTab(tab);
+  };
+
 
       const handleLike = async (tweetId) => {
         try {
@@ -467,7 +477,7 @@ const Tweet = () => {
         fetchTweets();
       }, []);
   
-       useEffect(() => {
+      useEffect(() => {
        const interval = setInterval(() => {
         fetchTweets();
       }, 10000); 
@@ -500,8 +510,14 @@ const Tweet = () => {
     <div className="container">
       <div className="post-section">
         <div className="tweet-grid">
+      <div className="post-tab">
+        <button onClick={() => handleTabClick('recentTweet')} className={`post-button ${activeTab === 'recentTweet' ? 'active' : ''}`}><i className="fa-solid fa-fire-flame-curved"></i>Recent Tweet</button>
+        <button onClick={() => handleTabClick('following')} className={`post-button ${activeTab === 'following' ? 'active' : ''}`}><i class="fa-solid fa-hashtag"></i>Following</button>
+      </div>
           <TweetPost />
           <ToastContainer />
+      <div>
+        {activeTab === 'recentTweet' && (
           <div className="twee-map">
           {tweets.map((tweet) => (
             <div className="tweet" key={tweet._id}>
@@ -628,6 +644,138 @@ const Tweet = () => {
             </div>
           ))}
           </div>
+        )}
+            {activeTab === 'following' && (
+          <div className="twee-map">
+           {tweets
+             .filter((tweet) => followStatus[tweet.profile_id] === "Following")
+              .map((tweet) => (
+            <div className="tweet" key={tweet._id}>
+              <div className="opos">
+                <div className="avatar">
+                  {tweet.avatar && (
+                    <img
+                      src={tweet.avatar}
+                      alt={`${tweet.profile_id} Avatar`}
+                    />
+                  )}
+                  <div className="user-info">
+                    <h3>{tweet.username}</h3>
+                    {tweet.location && tweet.location.placeName && (
+                      <h6>
+                        &nbsp;&nbsp;,
+                        <i className="fa-solid fa-location-dot"></i>
+                        {tweet.location.placeName}
+                      </h6>
+                    )}
+                    {profileData?._id !== tweet.profile_id && (
+                      <button
+                        className="fbtn"
+                        onClick={() =>
+                          handleFollow(tweet.profile_id, tweet.username)
+                        }
+                      >
+                        {followStatus[tweet.profile_id] === "Following"
+                          ? "Following"
+                          : "Follow"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="options">
+                  <i
+                    className="fa-solid fa-ellipsis-vertical"
+                    onClick={() => toggleOptions(tweet._id)}
+                  ></i>
+                  {showOptions === tweet._id && (
+                    <div className="options-menu">
+                      {profileData?._id !== tweet.profile_id && (
+                        <button
+                          className="opb"
+                          onClick={() => handleBookmark(tweet._id)}
+                        >
+                          <i className="fa-regular fa-bookmark"></i>
+                          {bookmarkedTweets.includes(tweet._id)
+                            ? "remove"
+                            : "Bookmark"}
+                        </button>
+                      )}
+                      {isAuthenticated &&
+                        (user.name === "tricticle" ||
+                          profileData?._id === tweet.profile_id) && (
+                          <button
+                            className="opb"
+                            onClick={() => handleDeleteTweet(tweet._id)}
+                          >
+                            <i className="fa-regular fa-trash-can"></i>
+                            Delete
+                          </button>
+                        )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="tweet-area">
+                {tweet.hashtags && (
+                  <p>
+                    {tweet.hashtags.map((tag, index) => (
+                      <span key={index} className="hashtag">
+                        {" "}
+                        #{tag}
+                      </span>
+                    ))}
+                  </p>
+                )}
+                <h5>{tweet.text}</h5>
+              </div>
+              <div className="button-group">
+                {selectedTweetId === tweet._id ? (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Type your reply here"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    />
+                    <button onClick={() => postReply(tweet._id)}>Reply</button>
+                  </>
+                ) : (
+                  <button onClick={() => setSelectedTweetId(tweet._id)}>
+                    Reply
+                  </button>
+                )}
+                <button
+                  className={likedTweets.includes(tweet._id) ? "liked" : ""}
+                  onClick={() => handleLike(tweet._id)}
+                >
+                  <i className="fas fa-heart"></i>
+                </button>
+              </div>
+              {repliesTweets.map((reply) => {
+                if (reply.tweet_id === tweet._id) {
+                  return (
+                    <div className="replies" key={reply._id}>
+                      <div className="user-info">
+                        <img
+                          className="avatar"
+                          src={reply.avatar}
+                          alt={`${reply.user_id} Avatar`}
+                        />
+                        <h3>{reply.username}</h3>
+                      </div>
+                      <div className="reptext">
+                        <p>{reply.text}</p>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
+          ))}
+          </div>
+        )}
+      </div>
         </div>
       </div>
     </div>

@@ -262,6 +262,7 @@ body::-webkit-scrollbar {
   flex-direction: column;
   flex-wrap: wrap;
   padding: 10px;
+  margin: 7px;
   border-radius: 20px;
 }
 
@@ -826,7 +827,7 @@ input[type="checkbox"]:checked {
   background-color: var(--text-color);
 }
 
-.tweet .fbtn {
+.user-info .fbtn {
   background-color: #1da1f2;
   /* Twitter blue, you can adjust the color as needed */
   color: #ffffff;
@@ -866,6 +867,7 @@ input[type="checkbox"]:checked {
 
 a{
   text-decoration: none;
+  color: var(--text-color);
 }
 
 .fa-twitter {

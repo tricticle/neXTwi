@@ -1,4 +1,5 @@
 // api/follow.js
+
 const mongoose = require('mongoose');
 const { Follow, Profile } = require('./database');
 
@@ -35,7 +36,6 @@ module.exports = async (req, res) => {
         return res.status(404).json({ error: 'Follower or following user not found' });
       }
 
-      // Create the follow relationship
       const follow = new Follow({
         _id: new mongoose.Types.UUID(),
         follower_id,
@@ -49,7 +49,6 @@ module.exports = async (req, res) => {
       res.status(201).json(follow);
     } else if (req.method === 'GET') {
       if (req.query.follower_id && req.query.following_id) {
-        // Fetch follow relationship by follower_id and following_id
         const query = {
           follower_id: req.query.follower_id,
           following_id: req.query.following_id,
@@ -70,13 +69,13 @@ module.exports = async (req, res) => {
           res.status(404).json({ error: 'Follow relationship not found' });
         }
       } else {
-        res.status(400).json({ error: 'Both follower_id and following_id are required for fetching a follow relationship' });
+        const allFollows = await Follow.find().lean();
+        res.json(allFollows);
       }
     } else if (req.method === 'DELETE') {
       const { follower_id, following_id } = req.body;
 
       if (follower_id && following_id) {
-        // Delete the follow relationship
         const result = await Follow.deleteOne({ follower_id, following_id });
 
         if (result.deletedCount === 0) {

@@ -9,6 +9,7 @@ import Admin from "./components/layouts/Admin";
 import Bookmarks from "./components/layouts/Bookmarks";
 import Like from "./components/Like";
 import Profile from "./components/layouts/Profile";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   const { isAuthenticated, user } = useAuth0();
@@ -74,6 +75,7 @@ function App() {
           <Route path="explore" element={<SearchResults />} />
           <Route path="Like" element={<Like />} />
           <Route path="Bookmarks" element={<Bookmarks />} />
+          <Route path="userprofile/:userId" element={<UserProfile />} />
           <Route
             path="Profile"
             element={

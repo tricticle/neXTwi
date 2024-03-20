@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,7 +16,22 @@ const Profile = ({ profileId }) => {
       const [likedTweets, setLikedTweets] = useState([]);
       const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
       const [showOptions, setShowOptions] = useState(null);
-      const [followStatus, setFollowStatus] = useState({});
+  const [followStatus, setFollowStatus] = useState({});
+   const [prof, setProf] = useState({});
+  const { userId } = useParams();
+
+  useEffect(() => {
+    const fetchprof = async () => {
+try {
+      const response = await axios.get(`/api/profile?id=${userId}`);
+  console.log("Profile:", response.data);
+  setProf(response.data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+    fetchprof();
+  },[isAuthenticated,userId]);
 
       const handleLike = async (tweetId) => {
         try {
@@ -482,31 +498,40 @@ const Profile = ({ profileId }) => {
     <div className="profile-container">
       <div className="p-back">
         <img src="./assets/p-back.png" alt="background" />
-      </div>
-          {isAuthenticated && (
-            <div className="profi">
-              <img
-                loading="lazy"
-                src={user.picture}
-                alt={user.name}
-          />
-          <div className="padj">
-            <div className="u-info">
-              <h4>{user.name}!</h4>
-            <h4>{profileId}</h4>
-          </div>
-          <div className="u-info">
-            <a href="https://myaccount.google.com/profile"><i class="fas fa-pen"></i>edit Profile</a>
-          </div>
-          </div>
+        </div>
+{prof && (
+          <div className="profi">
+            <img loading="lazy" src={prof.avatar} alt={prof.username} />
+            <div className="padj">
+              <div className="u-info">
+                <h4>{prof.username}!</h4>
+                <h4>{userId}</h4>
+              </div>
+              <div className="u-info">
+                <div className="user-info">
+                  {isAuthenticated && profileData?._id !== prof._id && (
+                    <button
+                      className="fbtn"
+                  onClick={() =>
+                    handleFollow(prof._id, prof.username)
+                  }
+                >
+                  {followStatus[prof._id] === "Following"
+                    ? "Following"
+                    : "Follow"}
+                </button>
+              )}
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+        )}
       </div>
       <div className="post-section">
                 <div className="tweet-grid">
           <div className="twee-map">
             {tweets
-              .filter((tweet) => tweet.profile_id === profileId)
+              .filter((tweet) => tweet.profile_id === userId)
               .map((tweet) => (
 <div className="tweet" key={tweet._id}>
               <div className="opos">

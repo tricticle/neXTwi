@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -484,8 +485,9 @@ const Like = ({ profileId }) => {
             {tweets
               .filter((tweet) => likedTweets.includes(tweet._id))
               .map((tweet) => (
-            <div className="tweet" key={tweet._id}>
+<div className="tweet" key={tweet._id}>
               <div className="opos">
+                <Link to={ `/userprofile/${tweet.profile_id}` }>
                 <div className="avatar">
                   {tweet.avatar && (
                     <img
@@ -515,7 +517,8 @@ const Like = ({ profileId }) => {
                       </button>
                     )}
                   </div>
-                </div>
+                  </div>
+                  </Link>
                 <div className="options">
                   <i
                     className="fa-solid fa-ellipsis-vertical"
@@ -589,6 +592,7 @@ const Like = ({ profileId }) => {
                 if (reply.tweet_id === tweet._id) {
                   return (
                     <div className="replies" key={reply._id}>
+                      <Link to={ `/userprofile/${reply.user_id}` }>
                       <div className="user-info">
                         <img
                           className="avatar"
@@ -596,7 +600,8 @@ const Like = ({ profileId }) => {
                           alt={`${reply.user_id} Avatar`}
                         />
                         <h3>{reply.username}</h3>
-                      </div>
+                        </div>
+                      </Link>
                       <div className="reptext">
                         <p>{reply.text}</p>
                       </div>

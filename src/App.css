@@ -983,7 +983,8 @@ textarea {
   display: flex;
   flex-wrap: nowrap;
   gap: 10px;
-  justify-content: flex-start;;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .admin-profile img {

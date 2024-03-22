@@ -545,15 +545,18 @@ try {
                   <div className="user-info">
                     <h3>{tweet.username}</h3>
                     {tweet.location && tweet.location.placeName && (
-                      <h6>
-                        &nbsp;&nbsp;,
-                        <i className="fa-solid fa-location-dot"></i>
-                        {tweet.location.placeName}
-                      </h6>
+                    <>
+                    &nbsp;&nbsp;,
+                    <i className="fa-solid fa-location-dot"></i>
+                    <h6>
+                    {tweet.location.placeName}
+                    </h6>
+                    </>
                     )}
                   </div>
                   </div>
                     </Link>
+                    <div className="fobtn">
                     {profileData?._id !== tweet.profile_id && (
                       <button
                         className="fbtn"
@@ -566,6 +569,7 @@ try {
                           : "Follow"}
                       </button>
                     )}
+                    </div>
                 <div className="options">
                   <i
                     className="fa-solid fa-ellipsis-vertical"

@@ -504,6 +504,9 @@ const Like = ({ profileId }) => {
                         {tweet.location.placeName}
                       </h6>
                     )}
+                  </div>
+                  </div>
+                    </Link>
                     {profileData?._id !== tweet.profile_id && (
                       <button
                         className="fbtn"
@@ -516,9 +519,6 @@ const Like = ({ profileId }) => {
                           : "Follow"}
                       </button>
                     )}
-                  </div>
-                  </div>
-                  </Link>
                 <div className="options">
                   <i
                     className="fa-solid fa-ellipsis-vertical"

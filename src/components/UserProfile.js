@@ -497,7 +497,6 @@ try {
   <>
     <div className="profile-container">
       <div className="p-back">
-        <img src="./assets/p-back.png" alt="background" />
         </div>
 {prof && (
           <div className="profi">
@@ -552,6 +551,9 @@ try {
                         {tweet.location.placeName}
                       </h6>
                     )}
+                  </div>
+                  </div>
+                    </Link>
                     {profileData?._id !== tweet.profile_id && (
                       <button
                         className="fbtn"
@@ -564,9 +566,6 @@ try {
                           : "Follow"}
                       </button>
                     )}
-                  </div>
-                  </div>
-                  </Link>
                 <div className="options">
                   <i
                     className="fa-solid fa-ellipsis-vertical"

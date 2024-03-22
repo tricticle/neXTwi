@@ -36,56 +36,6 @@
   }
 }
 
-@keyframes bgcolor {
-  0% {
-    background-color: #ffbdbd;
-  }
-
-  20% {
-    background-color: #b882ff;
-  }
-
-  40% {
-    background-color: #50b9ff;
-  }
-
-  60% {
-    background-color: #50b9ff;
-  }
-
-  80% {
-    background-color: #d08dff;
-  }
-
-  100% {
-    background-color: #ffbebe;
-  }
-}
-
-@keyframes shake {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  30% {
-    transform: rotate(30deg);
-  }
-
-  50% {
-    transform: rotate(0deg);
-    transform: scale(70%);
-  }
-
-  80% {
-    transform: rotate(-30deg);
-  }
-
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-
 * {
   margin: 0;
   padding: 0;
@@ -95,6 +45,11 @@
   --tran: all 0.5s ease;
   color: dark light;
   text-wrap: balance;
+}
+
+button:hover{
+  color: var(--background-color);
+  background-color: var(--secondary-color);
 }
 
 .wrap-ins {
@@ -121,62 +76,6 @@ body::-webkit-scrollbar {
   background-color: rgba(255, 255, 255, 0);
   backdrop-filter: blur(70px);
   border-radius: 7px;
-}
-
-@keyframes move {
-  0% {
-    background-position: 36% 42%;
-    background-size: 200%;
-  }
-
-  20% {
-    background-position: 30% 35%;
-    background-size: 300%;
-  }
-
-  20.0001% {
-    /* -- View 2 -- */
-    background-position: 60% 85%;
-    background-size: 400%;
-  }
-
-  40% {
-    background-position: 49% 81%;
-    background-size: 350%;
-  }
-
-  40.0001% {
-    /* -- View 3 -- */
-    background-position: 80% 42%;
-    background-size: 300%;
-  }
-
-  60% {
-    background-position: 84% 33%;
-    background-size: 250%;
-  }
-
-  60.0001% {
-    /* -- View 4 -- */
-    background-position: 0% 0%;
-    background-size: 300%;
-  }
-
-  80% {
-    background-position: 15% 4%;
-    background-size: 350%;
-  }
-
-  80.0001% {
-    /* -- View 5 -- */
-    background-position: 80% 10%;
-    background-size: 400%;
-  }
-
-  100% {
-    background-position: 72% 14%;
-    background-size: 300%;
-  }
 }
 
 .header {
@@ -505,7 +404,7 @@ h6 {
 
 .options-menu {
   position: absolute;
-  top: 35px;
+  top: 40px;
   right: 10;
   background-color: var(--background-color);
   display: flex;
@@ -630,16 +529,17 @@ i {
 .tweet button {
   transition: var(--tran);
   display: flex;
-  margin: 10px;
+  margin: 3px;
   padding: 5px;
-  background-color: hsla(0, 0%, 0%, 0);
-  color: var(--secondary-color);
+  color: var(--text-color);
+  background-color: var(--background-color);
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
+  border-radius: 3px;
+}
+
+.tweet button:hover{
+  background-color: var(--text-color);
+  color: var(--background-color);
 }
 
 input[type="text"] {
@@ -827,11 +727,9 @@ input[type="checkbox"]:checked {
   background-color: var(--text-color);
 }
 
-.user-info .fbtn {
+ .opos .fbtn {
   background-color: #1da1f2;
-  /* Twitter blue, you can adjust the color as needed */
-  color: #ffffff;
-  /* White text for contrast */
+  color: var(--background-color);
   border: none;
   padding: 3px 9px;
   border-radius: 5px;
@@ -839,6 +737,12 @@ input[type="checkbox"]:checked {
   display: flex;
   align-items: center;
   font-size: 11px;
+}
+
+.options{
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .sidebar {
@@ -1064,6 +968,7 @@ textarea {
 
 .admin-section {
   display: flex;
+  align-items: center;
   flex-direction: column;
 }
 
@@ -1071,21 +976,35 @@ textarea {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  align-items: center;
 }
 
 .admin-profile {
   padding: 10px;
   display: flex;
   flex-wrap: nowrap;
-  align-items: center;
   gap: 10px;
+  justify-content: flex-start;;
 }
 
 .admin-profile img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+}
+
+.admin-profile .u-info{
+  display: flex;
+    background-color: var(--text-color);
+    color: var(--background-color);
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    border-radius: 7px;
+    font-size: 11px;
+    text-wrap: balance;
+    align-items: center;
+    gap: 20px;
+    justify-content: space-between;
 }
 
 .admin-profile button {
@@ -1097,7 +1016,7 @@ textarea {
   border-radius: 7px;
 }
 
-button:hover {
+.admin-profile button:hover {
   background-color: var(--secondary-color);
   color: var(--background-color);
 }

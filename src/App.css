@@ -324,6 +324,7 @@ body::-webkit-scrollbar {
 .user-info h3,
 h6 {
   font-size: 11px;
+  width: max-content;
 }
 
 .tweet img {
@@ -727,7 +728,7 @@ input[type="checkbox"]:checked {
   background-color: var(--text-color);
 }
 
- .opos .fbtn {
+ .opos .fbtn , .user-info .fbtn {
   background-color: #1da1f2;
   color: var(--background-color);
   border: none;

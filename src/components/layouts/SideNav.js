@@ -110,7 +110,7 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
     <div className="sidebar">
       <div className="sidebar-menu">
         <Link to="/">
-          <i className="fab fa-twitter"></i>
+          <i class="fa-solid fa-meteor"></i>
         </Link>
         <Link
           to="/home"

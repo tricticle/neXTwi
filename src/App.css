@@ -757,15 +757,34 @@ input[type="checkbox"]:checked {
 }
 
 .sidebar .profile {
-  margin-bottom: 30px;
+  padding: 17px;
 }
 
 .sidebar-menu {
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
-.fab{
+.sidebar-menu::-webkit-scrollbar {
+  width: 7px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 20px;
+}
+
+.widgets::-webkit-scrollbar {
+  width: 7px;
+}
+
+.widgets::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 20px;
+}
+
+.sidebar-menu .fa-solid{
   display: flex;
   justify-content: center;
 }
@@ -775,7 +794,7 @@ a{
   color: var(--text-color);
 }
 
-.fa-twitter {
+.fa-meteor {
   color: var(--secondary-color);
   font-size: 30px;
 }
@@ -792,7 +811,7 @@ a{
 
 .sidebarOption .material-icons,
 .material-symbols-outlined,
-.fa-twitter {
+.fa-meteor {
   padding: 20px;
 }
 
@@ -874,6 +893,8 @@ a{
   align-items: center;
   gap: 30px;
   height: 100dvh;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .widgets__widgetContainer {

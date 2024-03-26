@@ -536,7 +536,7 @@ const Tweet = () => {
                     <h3>{tweet.username}</h3>
                     {tweet.location && tweet.location.placeName && (
                     <>
-                    &nbsp;&nbsp;,
+                    ,
                     <i className="fa-solid fa-location-dot"></i>
                     <h6>
                     {tweet.location.placeName}
@@ -674,7 +674,7 @@ const Tweet = () => {
                     <h3>{tweet.username}</h3>
                     {tweet.location && tweet.location.placeName && (
                     <>
-                    &nbsp;&nbsp;,
+                    ,
                     <i className="fa-solid fa-location-dot"></i>
                     <h6>
                     {tweet.location.placeName}

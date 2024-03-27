@@ -41,7 +41,6 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', cursive;
-  text-transform: capitalize;
   --tran: all 0.5s ease;
   color: dark light;
   text-wrap: balance;
@@ -50,6 +49,7 @@
 button:hover{
   color: var(--background-color);
   background-color: var(--secondary-color);
+  outline: none;
 }
 
 .wrap-ins {
@@ -482,10 +482,10 @@ h6 {
   border-radius: 5px;
 }
 
-.post-button.active .fa-fire-flame-curved {
+.post-button.active .fa-fire-flame-curved, .fa-sliders {
   color: var(--primary-color);
 }
-.post-button.active .fa-hashtag {
+.post-button.active .fa-hashtag, .fa-list {
   color: var(--secondary-color);
 }
 
@@ -916,10 +916,10 @@ a{
   display: flex;
   align-items: center;
   background-color: var(--side-color);
-  padding: 10px;
-  border-radius: 20px;
+  padding: 11px;
+  border-radius: 7px;
   max-width: 300px;
-  margin-top: 10px;
+  margin: 10px;
 }
 
 .widgets__input input {
@@ -1042,4 +1042,106 @@ textarea {
 .admin-profile button:hover {
   background-color: var(--secondary-color);
   color: var(--background-color);
+}
+
+/* Style for the tweet table container */
+.tweet-table-container {
+  font-family: Arial, sans-serif;
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+/* Style for the tweet table toolbar */
+.tweet-table-toolbar {
+  margin: 10px;
+}
+
+/* Style for the delete button */
+.delete-button {
+  background-color: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.delete-button:disabled{
+  display: none;
+}
+
+.delete-button:hover {
+  background-color: #ff7875;
+}
+
+/* Style for the table */
+.tweet-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Style for table headers */
+.tweet-table th {
+  background-color: #f2f2f2;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Style for table cells */
+.tweet-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Style for checkbox in the table */
+.tweet-table-checkbox {
+  margin: 0;
+}
+
+/* Style for select option */
+.delete-select {
+  margin-right: 10px;
+  padding: 5px;
+}
+
+.search-tweet {
+  color: var(--background-color);
+  background-color: var(--text-color);
+  border-radius: 70px;
+  padding: 10px 15px;
+  font-weight: 900;
+  margin: 9px;
+  font-size: 12px;
+  outline: none;
+}
+
+.back-center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.back-grey{
+  display: flex;
+  align-items: center;
+  background-color: var(--side-color);
+  padding: 3px;
+  border-radius: 70px;
+  max-width: max-content;
+  margin: 10px;
+}
+
+.back-grey input{
+  background-color: transparent;
+}
+
+.back-cen{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
 }

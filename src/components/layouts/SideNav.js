@@ -160,7 +160,7 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           onClick={() => handleOptionClick("Admin")}
           >
           <span class="material-symbols-outlined">admin_panel_settings</span>
-          <h2>admin</h2>
+          <h2>Admin</h2>
         </Link>
           </>
           )}

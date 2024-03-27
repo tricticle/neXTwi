@@ -1,7 +1,7 @@
 // api/tweet.js
 const mongoose = require('mongoose');
 const axios = require('axios');
-const { Tweet } = require('./database');
+const { Tweet, Like, Reply, Bookmark, Blocklist } = require('./database');
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -31,6 +31,13 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'POST') {
       const { text, profile_id, hashtags, location } = req.body;
+      const blocklistWords = await Blocklist.find({}, 'word');
+      const blockedWords = blocklistWords.map(item => item.word);
+      const containsBlockedWords = blockedWords.some(word => text.includes(word));
+
+      if (containsBlockedWords) {
+        return res.status(400).json({ error: 'Tweet contains blocked words' });
+      }
       const tweet = new Tweet({
         _id: new mongoose.Types.UUID(),
         text,
@@ -69,6 +76,12 @@ module.exports = async (req, res) => {
       if (!tweet_id) {
         return res.status(400).json({ error: 'tweet_id is required for deletion' });
       }
+
+      await Like.deleteMany({ tweet_id });
+      await Reply.deleteMany({ tweet_id });
+      await Bookmark.deleteMany({ tweet_id });
+
+
 
       const deletedTweet = await Tweet.findByIdAndDelete(tweet_id);
       if (!deletedTweet) {

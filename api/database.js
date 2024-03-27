@@ -84,8 +84,14 @@ const profileSchema = new mongoose.Schema({
     following_username: { type: String, required: true },
     created_at: { type: Date, required: true },
   });
-  
+
   const Follow = mongoose.model('Follow', followSchema);
+  
+const blocklistSchema = new mongoose.Schema({
+    word: String,
+  });
+
+const Blocklist = mongoose.model('Blocklist', blocklistSchema);
   
   module.exports = {
     Profile,
@@ -96,5 +102,6 @@ const profileSchema = new mongoose.Schema({
     Bookmark,
     Reply,
     Follow,
+    Blocklist,
   };
   

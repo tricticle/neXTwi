@@ -68,10 +68,30 @@ module.exports = async (req, res) => {
         } else {
           res.status(404).json({ error: 'Follow relationship not found' });
         }
-      } else {
-        const allFollows = await Follow.find().lean();
-        res.json(allFollows);
-      }
+      } else if (req.query.follower_id) {
+    const follower_id = req.query.follower_id;
+
+    const followerFollows = await Follow.find({ follower_id }).lean();
+
+    if (followerFollows.length > 0) {
+      res.json(followerFollows);
+    } else {
+      res.status(404).json({ error: 'No follows found for the given follower ID' });
+    }
+  } else if (req.query.following_id) {
+    const following_id = req.query.following_id;
+
+    const followingFollows = await Follow.find({ following_id }).lean();
+
+    if (followingFollows.length > 0) {
+      res.json(followingFollows);
+    } else {
+      res.status(404).json({ error: 'No follows found for the given following ID' });
+    }
+  } else {
+    const allFollows = await Follow.find().lean();
+    res.json(allFollows);
+  }
     } else if (req.method === 'DELETE') {
       const { follower_id, following_id } = req.body;
 

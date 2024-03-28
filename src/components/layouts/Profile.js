@@ -15,7 +15,45 @@ const Profile = ({ profileId }) => {
       const [likedTweets, setLikedTweets] = useState([]);
       const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
       const [showOptions, setShowOptions] = useState(null);
-      const [followStatus, setFollowStatus] = useState({});
+  const [followStatus, setFollowStatus] = useState({});
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+
+const fetchFollowerCounts = async () => {
+  try {
+    const response = await axios.get(`/api/follow?follower_id=${profileId}`);
+    if (response.data) {
+      const followerCount = response.data.length;
+      setFollowerCount(followerCount);
+    }
+  } catch (error) {
+    console.error("Error fetching follower counts:", error);
+  }
+};
+
+const fetchFollowingCounts = async () => {
+  try {
+    const response = await axios.get(`/api/follow?following_id=${profileId}`);
+    if (response.data) {
+      const followingCount = response.data.length;
+      setFollowingCount(followingCount);
+    }
+  } catch (error) {
+    console.error("Error fetching following counts:", error);
+  }
+  };
+  
+  useEffect(() => {
+  const fetchCounts = async () => {
+    if (profileData && profileData._id) {
+      await fetchFollowerCounts();
+      await fetchFollowingCounts();
+    }
+  };
+
+  fetchCounts();
+}, [profileData]);
+
 
       const handleLike = async (tweetId) => {
         try {
@@ -500,7 +538,11 @@ const Profile = ({ profileId }) => {
           </div>
           </div>
             </div>
-          )}
+        )}
+        <div className="follower-following-counts">
+          <h3>{followingCount} Following</h3>
+          <h3>{followerCount} Followers</h3>
+        </div>
       </div>
       <div className="post-section">
                 <div className="tweet-grid">

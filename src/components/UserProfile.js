@@ -24,7 +24,7 @@ const Profile = ({ profileId }) => {
 
   const fetchFollowerCounts = async () => {
     try {
-      const response = await axios.get(`/api/follow?follower_id=${userId}`);
+      const response = await axios.get(`/api/follow?following_id=${userId}`);
       if (response.data) {
         const followerCount = response.data.length;
         setFollowerCount(followerCount);
@@ -36,7 +36,7 @@ const Profile = ({ profileId }) => {
 
   const fetchFollowingCounts = async () => {
     try {
-      const response = await axios.get(`/api/follow?following_id=${userId}`);
+      const response = await axios.get(`/api/follow?follower_id=${userId}`);
       if (response.data) {
         const followingCount = response.data.length;
         setFollowingCount(followingCount);

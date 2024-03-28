@@ -15,13 +15,12 @@ const Profile = ({ profileId }) => {
   const [likedTweets, setLikedTweets] = useState([]);
   const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
   const [showOptions, setShowOptions] = useState(null);
-  const [followStatus, setFollowStatus] = useState({});
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
   const fetchFollowerCounts = async () => {
     try {
-      const response = await axios.get(`/api/follow?follower_id=${profileId}`);
+      const response = await axios.get(`/api/follow?following_id=${profileId}`);
       if (response.data) {
         const followerCount = response.data.length;
         setFollowerCount(followerCount);
@@ -33,7 +32,7 @@ const Profile = ({ profileId }) => {
 
   const fetchFollowingCounts = async () => {
     try {
-      const response = await axios.get(`/api/follow?following_id=${profileId}`);
+      const response = await axios.get(`/api/follow?follower_id=${profileId}`);
       if (response.data) {
         const followingCount = response.data.length;
         setFollowingCount(followingCount);
@@ -138,100 +137,6 @@ const Profile = ({ profileId }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-    }
-  };
-
-  const handleFollow = async (followingId, followingUsername) => {
-    try {
-      if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-      const isFollowing = followStatus[followingId];
-      const method = isFollowing ? "DELETE" : "POST";
-
-      const response = await fetch("/api/follow", {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          follower_id: profileData._id,
-          follower_username: profileData.username,
-          following_id: followingId,
-          following_username: followingUsername,
-        }),
-      });
-
-      if (response.ok) {
-        // Instead of relying on the current state, check the response from the server
-        const newFollowStatus = await fetchFollowStatus(followingId);
-        console.log(
-          `User ${isFollowing ? "unfollowed" : "followed"} successfully`
-        );
-        toast.success(
-          `User ${isFollowing ? "unfollowed" : "followed"} successfully`,
-          {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          }
-        );
-        setFollowStatus((prevStatus) => ({
-          ...prevStatus,
-          [followingId]: newFollowStatus,
-        }));
-      } else {
-        console.error(`Failed to ${isFollowing ? "unfollow" : "follow"} user`);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchFollowStatus = async (userId) => {
-    try {
-      const response = await fetch(
-        `/api/follow?follower_id=${profileData._id}&following_id=${userId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const follow = await response.json();
-        setFollowStatus((prevStatus) => ({
-          ...prevStatus,
-          [userId]: follow ? "Following" : "Follow",
-        }));
-        return follow ? "Following" : "Follow"; // Return the follow status
-      } else if (
-        response.status === 404 &&
-        response.statusText === "Not Found"
-      ) {
-        // Follow relationship not found, assuming not being followed
-        setFollowStatus((prevStatus) => ({
-          ...prevStatus,
-          [userId]: "Follow",
-        }));
-        console.log(
-          "Follow relationship not found, assuming not being followed"
-        );
-        return "Follow";
-      } else {
-        console.error("Failed to fetch follow status");
-        return null; // or handle the error appropriately
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      return null; // or handle the error appropriately
     }
   };
 
@@ -501,15 +406,8 @@ const Profile = ({ profileId }) => {
     if (profileData && profileData._id) {
       fetchLikes();
       fetchBookmarks();
-      tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
   }, [profileData]);
-
-  useEffect(() => {
-    if (profileData && profileData._id) {
-      tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
-    }
-  }, [tweets]);
 
   return (
     <>
@@ -565,20 +463,6 @@ const Profile = ({ profileId }) => {
                         </div>
                       </div>
                     </Link>
-                    <div className="fobtn">
-                      {profileData?._id !== tweet.profile_id && (
-                        <button
-                          className="fbtn"
-                          onClick={() =>
-                            handleFollow(tweet.profile_id, tweet.username)
-                          }
-                        >
-                          {followStatus[tweet.profile_id] === "Following"
-                            ? "Following"
-                            : "Follow"}
-                        </button>
-                      )}
-                    </div>
                     <div className="options">
                       <i
                         className="fa-solid fa-ellipsis-vertical"

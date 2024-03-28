@@ -2,18 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
 
-const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
+const SideNav = ({ profileId, onTweetButtonClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
-  const [adminData, setAdminData] = useState(null);
   const [activeOption, setActiveOption] = useState(null);
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
 
   const handleOptionClick = (option) => {
-          if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
     setActiveOption(option === activeOption ? null : option);
   };
 
@@ -62,55 +61,11 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
     };
   }, [isMenuOpen]);
 
-  const handleAdmin = async () => {
-    try {
-      const response = await fetch("/api/profile", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const adminData = await response.json();
-        setAdminData(adminData);
-        console.log("Admin data:", adminData);
-      } else {
-        console.error("Failed to fetch admin data");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleDeleteProfile = async (username, profileId) => {
-    try {
-      const response = await fetch(`/api/profile?id=${profileId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-        }),
-      });
-
-      if (response.ok) {
-        console.log("Profile deleted successfully");
-        handleAdmin(); // Reload admin data after deletion
-      } else {
-        console.error("Failed to delete profile");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   return (
     <div className="sidebar">
       <div className="sidebar-menu">
         <Link to="/">
-          <i class="fa-solid fa-meteor"></i>
+          <i className="fa-solid fa-meteor"></i>
         </Link>
         <Link
           to="/home"
@@ -128,12 +83,12 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <span className="material-icons">search</span>
           <h2>Explore</h2>
         </Link>
-          <Link
+        <Link
           to="/Like"
           className={`sidebarOption ${isActive("like")}`}
           onClick={() => handleOptionClick("like")}
         >
-          <span class="material-symbols-outlined">favorite</span>
+          <span className="material-symbols-outlined">favorite</span>
           <h2>Likes</h2>
         </Link>
         <Link
@@ -152,21 +107,24 @@ const SideNav = ({ profileId, onTweetButtonClick, onSomeClick }) => {
           <span className="material-icons">perm_identity</span>
           <h2>Profile</h2>
         </Link>
-          {isAuthenticated &&
-          (user.name === "tricticle") && (
-<>        <Link
-          to="/Admin"
-          className={`sidebarOption ${isActive("Admin")}`}
-          onClick={() => handleOptionClick("Admin")}
-          >
-          <span class="material-symbols-outlined">admin_panel_settings</span>
-          <h2>Admin</h2>
-        </Link>
+        {isAuthenticated && user.name === "tricticle" && (
+          <>
+            {" "}
+            <Link
+              to="/Admin"
+              className={`sidebarOption ${isActive("Admin")}`}
+              onClick={() => handleOptionClick("Admin")}
+            >
+              <span className="material-symbols-outlined">
+                admin_panel_settings
+              </span>
+              <h2>Admin</h2>
+            </Link>
           </>
-          )}
-          <button className="sidebar__tweet" onClick={toggleTweetPost}>
+        )}
+        <button className="sidebar__tweet" onClick={toggleTweetPost}>
           Tweet
-          </button>
+        </button>
       </div>
       <div className="profile">
         <div className="menu-btn">

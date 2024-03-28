@@ -15,10 +15,10 @@ const Home = () => {
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
 
   const handleTweetButtonClick = () => {
-          if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
     setIsTweetPostVisible(!isTweetPostVisible);
   };
 
@@ -75,7 +75,7 @@ const Home = () => {
 
   const postTweet = async () => {
     try {
-            if (!isAuthenticated) {
+      if (!isAuthenticated) {
         loginWithRedirect();
         return;
       }
@@ -108,14 +108,14 @@ const Home = () => {
       if (response.ok) {
         console.log("Tweet posted successfully");
         toast.success("Tweet posted successfully", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         setTweetText("");
         setHashtags("");
       } else {
@@ -170,7 +170,7 @@ const Home = () => {
       </div>
       <div className="widgets">
         <div className="ds-none">
-        <SearchResults />
+          <SearchResults />
         </div>
         <div className="widgets__widgetContainer">
           <h2>Subscribe to Premium</h2>

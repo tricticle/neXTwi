@@ -42,15 +42,15 @@ const SearchResults = () => {
             {results.profiles.length > 0 && (
               <div className="pop-prop">
                 <h3>Profiles</h3>
-                
+
                 {results.profiles.map((profile) => (
                   <Link to={`/userprofile/${profile._id}`}>
-                  <div key={profile._id} className="prop-cont">
-                    <img
-                      src={profile.avatar}
-                      alt={`${profile.username}'s avatar`}
-                    />
-                    <h4>{profile.username}</h4>
+                    <div key={profile._id} className="prop-cont">
+                      <img
+                        src={profile.avatar}
+                        alt={`${profile.username}'s avatar`}
+                      />
+                      <h4>{profile.username}</h4>
                     </div>
                   </Link>
                 ))}

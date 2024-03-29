@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 
 const TweetPost = () => {
@@ -98,7 +98,15 @@ const TweetPost = () => {
         setTweetText("");
         setHashtags("");
       } else {
-        console.error("Failed to post tweet");
+        const data = await response.json();
+        if (
+          response.status === 400 &&
+          data.error === "Tweet contains blocked words"
+        ) {
+          alert(`Tweet contains blocked word: ${data.blockedWord}`);
+        } else {
+          console.error("Failed to post tweet");
+        }
       }
     } catch (error) {
       console.error("Error:", error);

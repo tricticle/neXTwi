@@ -119,7 +119,15 @@ const Home = () => {
         setTweetText("");
         setHashtags("");
       } else {
-        console.error("Failed to post tweet");
+        const data = await response.json();
+        if (
+          response.status === 400 &&
+          data.error === "Tweet contains blocked words"
+        ) {
+          alert(`Tweet contains blocked word: ${data.blockedWord}`);
+        } else {
+          console.error("Failed to post tweet");
+        }
       }
     } catch (error) {
       console.error("Error:", error);

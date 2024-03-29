@@ -31,12 +31,14 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'POST') {
       const { text, profile_id, hashtags, location } = req.body;
-      const blocklistWords = await Blocklist.find({}, 'word');
-      const blockedWords = blocklistWords.map(item => item.word);
-      const containsBlockedWords = blockedWords.some(word => text.includes(word));
-
+      const blocklistWords = await Blocklist.find({}, "word");
+      const blockedWords = blocklistWords.map((item) => item.word);
+      const blockedWord = blockedWords.find((word) => text.includes(word)); // Capture the blocked word
+      const containsBlockedWords = blockedWords.some((word) =>
+        text.includes(word)
+      );
       if (containsBlockedWords) {
-        return res.status(400).json({ error: 'Tweet contains blocked words' });
+        return res.status(400).json({ error: 'Tweet contains blocked words',blockedWord });
       }
       const tweet = new Tweet({
         _id: new mongoose.Types.UUID(),

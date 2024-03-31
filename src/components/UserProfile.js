@@ -21,13 +21,92 @@ const Profile = ({ profileId }) => {
   const { userId } = useParams();
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [followerUsernames, setFollowerUsernames] = useState([]);
+  const [followingUsernames, setFollowingUsernames] = useState([]);
+  const [isFollowingOpen, setIsFollowingOpen] = useState(false);
+  const [isFollowerOpen, setIsFollowerOpen] = useState(false);
+
+  const toggleFollower = () => {
+    setIsFollowerOpen(!isFollowerOpen);
+  };
+
+  const closeFollower = () => {
+    setIsFollowerOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isFollowerOpen && !event.target.closest(".follower-list")) {
+        closeFollower();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isFollowerOpen]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isFollowerOpen) {
+        closeFollower();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFollowerOpen]);
+
+  const togglefollowing = () => {
+    setIsFollowingOpen(!isFollowingOpen);
+  };
+
+  const closefollowing = () => {
+    setIsFollowingOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isFollowingOpen && !event.target.closest(".following-list")) {
+        closefollowing();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isFollowingOpen]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isFollowingOpen) {
+        closefollowing();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isFollowingOpen]);
 
   const fetchFollowerCounts = async () => {
     try {
       const response = await axios.get(`/api/follow?following_id=${userId}`);
       if (response.data) {
-        const followerCount = response.data.length;
+        const followers = response.data;
+        const followerCount = followers.length;
         setFollowerCount(followerCount);
+        const followerUsernames = response.data;
+        setFollowerUsernames(followerUsernames);
       }
     } catch (error) {
       console.error("Error fetching follower counts:", error);
@@ -38,8 +117,11 @@ const Profile = ({ profileId }) => {
     try {
       const response = await axios.get(`/api/follow?follower_id=${userId}`);
       if (response.data) {
-        const followingCount = response.data.length;
+        const following = response.data;
+        const followingCount = following.length;
         setFollowingCount(followingCount);
+        const followingUsernames = response.data;
+        setFollowingUsernames(followingUsernames);
       }
     } catch (error) {
       console.error("Error fetching following counts:", error);
@@ -557,8 +639,32 @@ const Profile = ({ profileId }) => {
           </div>
         )}
         <div className="follower-following-counts">
-          <h3>{followingCount} Following</h3>
-          <h3>{followerCount} Followers</h3>
+          <h3 className="following-list" onClick={togglefollowing}>
+            {followingCount} Following
+          </h3>
+          <div className={`f-list ${isFollowingOpen ? "open" : ""}`}>
+            <h3>Following</h3>
+            <div>
+              {followingUsernames.map((username, index) => (
+                <Link to={`/userprofile/${username.following_id}`} key={index}>
+                  <h5>{username.following_username}</h5>
+                </Link>
+              ))}
+            </div>
+          </div>
+          <h3 className="follower-list" onClick={toggleFollower}>
+            {followerCount} Follower
+          </h3>
+          <div className={`f-list ${isFollowerOpen ? "open" : ""}`}>
+            <h3>Follower</h3>
+            <div>
+              {followerUsernames.map((username, index) => (
+                <Link to={`/userprofile/${username.follower_id}`} key={index}>
+                  <h5>{username.follower_username}</h5>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <div className="post-section">

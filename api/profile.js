@@ -1,6 +1,6 @@
 // api/profile.js
 const mongoose = require('mongoose');
-const { Profile, Tweet, Reply } = require('./database');
+const { Profile, Tweet, Reply, Follow } = require('./database');
 const axios = require('axios');
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -62,12 +62,15 @@ module.exports = async (req, res) => {
       if (req.query.id) {
         const userId = req.query.id;
         const deletedTweets = await Tweet.deleteMany({ profile_id: new mongoose.Types.UUID(userId) });
-         const deletedReply = await Reply.deleteMany({ user_id: new mongoose.Types.UUID(userId) });
+        const deletedReply = await Reply.deleteMany({ user_id: new mongoose.Types.UUID(userId) });
+        const deletedFollows = await Follow.deleteMany({
+          $or: [{ follower_id: userId }, { following_id: userId }],
+        });
         const deletedProfile = await Profile.findByIdAndDelete(userId);
 
         if (deletedProfile) {
           res.json({
-            message: 'Profile deleted successfully',
+            message: "Profile deleted successfully",
             deletedProfile: {
               _id: deletedProfile._id.toString(),
               username: deletedProfile.username,
@@ -75,6 +78,7 @@ module.exports = async (req, res) => {
             },
             deletedTweets: deletedTweets.deletedCount,
             deletedReply: deletedReply.deletedCount,
+            deletedFollows: deletedFollows.deletedCount,
           });
         } else {
           res.status(404).json({ error: 'Profile not found' });

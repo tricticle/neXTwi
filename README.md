@@ -4,7 +4,15 @@ Nextwi is a clone of Twitter with its basic functionalities, allowing users to e
 
 ## Nextwi Preview
 
-![Nextwi Preview](assets/nextwi-preview.png)
+![Nextwi Home](https://github.com/tricticle/neXTwi/blob/main/public/assets/home.png)
+![Nextwi Logged In User](https://github.com/tricticle/neXTwi/blob/main/public/assets/logged_in.png)
+![Nextwi Search](https://github.com/tricticle/neXTwi/blob/main/public/assets/Search.png)
+![Nextwi Likes](https://github.com/tricticle/neXTwi/blob/main/public/assets/likes.png)
+![Nextwi Bookmarks](https://github.com/tricticle/neXTwi/blob/main/public/assets/bookmarks.png)
+![Nextwi User Profile](https://github.com/tricticle/neXTwi/blob/main/public/assets/profile.png)
+![Nextwi Admin User manage](https://github.com/tricticle/neXTwi/blob/main/public/assets/admin_user_manage.png)
+![Nextwi Admin Tweet manage](https://github.com/tricticle/neXTwi/blob/main/public/assets/admin_tweet_manage.png)
+![Nextwi Admin Ban manage](https://github.com/tricticle/neXTwi/blob/main/public/assets/admin_ban_manage.png)
 
 
 ## Features
@@ -13,6 +21,7 @@ Nextwi is a clone of Twitter with its basic functionalities, allowing users to e
 - Post and share tweets
 - Like and bookmark tweets
 - Search for tweets and users
+- Add geolocation
 - Follow users
 - Delete own tweets
 

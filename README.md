@@ -4,15 +4,24 @@ Nextwi is a clone of Twitter with its basic functionalities, allowing users to e
 
 ## Nextwi Preview
 
-![Nextwi Home](https://github.com/tricticle/neXTwi/blob/main/public/assets/home.png)
-![Nextwi Logged In User](https://github.com/tricticle/neXTwi/blob/main/public/assets/logged_in.png)
-![Nextwi Search](https://github.com/tricticle/neXTwi/blob/main/public/assets/Search.png)
-![Nextwi Likes](https://github.com/tricticle/neXTwi/blob/main/public/assets/likes.png)
-![Nextwi Bookmarks](https://github.com/tricticle/neXTwi/blob/main/public/assets/bookmarks.png)
-![Nextwi User Profile](https://github.com/tricticle/neXTwi/blob/main/public/assets/profile.png)
-![Nextwi Admin User manage](https://github.com/tricticle/neXTwi/blob/main/public/assets/admin_user_manage.png)
-![Nextwi Admin Tweet manage](https://github.com/tricticle/neXTwi/blob/main/public/assets/admin_tweet_manage.png)
-![Nextwi Admin Ban manage](https://github.com/tricticle/neXTwi/blob/main/public/assets/admin_ban_manage.png)
+### Home
+![Nextwi Home](https://github.com/tricticle/neXTwi/blob/master/public/assets/home.png)
+### Logged In User
+![Nextwi Logged In User](https://github.com/tricticle/neXTwi/blob/master/public/assets/logged_in.png)
+### Search
+![Nextwi Search](https://github.com/tricticle/neXTwi/blob/master/public/assets/search.png)
+### Likes
+![Nextwi Likes](https://github.com/tricticle/neXTwi/blob/master/public/assets/likes.png)
+### Bookmarks
+![Nextwi Bookmarks](https://github.com/tricticle/neXTwi/blob/master/public/assets/bookmarks.png)
+### User Profile
+![Nextwi User Profile](https://github.com/tricticle/neXTwi/blob/master/public/assets/profile.png)
+### Admin User manage
+![Nextwi Admin User manage](https://github.com/tricticle/neXTwi/blob/master/public/assets/admin_user_manage.png)
+### Admin Tweet Manage
+![Nextwi Admin Tweet manage](https://github.com/tricticle/neXTwi/blob/master/public/assets/admin_tweet_manage.png)
+### Admin Ban Manage
+![Nextwi Admin Ban manage](https://github.com/tricticle/neXTwi/blob/master/public/assets/admin_ban_manage.png)
 
 
 ## Features

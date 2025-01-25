@@ -50,11 +50,11 @@ Nextwi is a clone of Twitter with its basic functionalities, allowing users to e
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/nextwi.git
+   git clone https://github.com/tricticle/neXTwi
    ```
 2. Navigate to the project directory:
    ```sh
-   cd nextwi
+   cd neXTwi
    ```
 3. Install dependencies:
    ```sh

@@ -396,7 +396,7 @@ const Bookmark = ({ profileId }) => {
     }
   };
 
-  const fetchReplies = async () => {
+  const fetchReplies = useCallback(async () => {
     try {
       const response = await fetch("/api/reply", {
         method: "GET",
@@ -430,7 +430,7 @@ const Bookmark = ({ profileId }) => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTweets();

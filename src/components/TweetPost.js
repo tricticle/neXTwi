@@ -48,7 +48,7 @@ const TweetPost = () => {
         console.error("Error creating profile:", err);
       }
     }
-  }, [user?.name, user?.sub]);
+  }, [user?.name, user?.sub, user?.picture]);
 
   useEffect(() => {
     if (isAuthenticated) {

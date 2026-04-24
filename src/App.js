@@ -15,19 +15,6 @@ function App() {
   const { isAuthenticated, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
 
-  const handleProfile = useCallback(async () => {
-    try {
-      const response = await axios.post("/api/profile", {
-        username: user.name,
-        avatar: user.picture,
-      });
-      console.log(response.data.message);
-      await addProfile();
-    } catch (error) {
-      console.error("Error creating profile:", error);
-    }
-  }, [user?.name, user?.picture]);
-
   const addProfile = useCallback(async () => {
     try {
       const response = await fetch(
@@ -56,15 +43,24 @@ function App() {
       }
     } catch (error) {
       console.error("Error:", error);
-      await handleProfile();
+      try {
+        const response = await axios.post("/api/profile", {
+          username: user.name,
+          avatar: user.picture,
+        });
+        console.log(response.data.message);
+        await addProfile();
+      } catch (err) {
+        console.error("Error creating profile:", err);
+      }
     }
-  }, [user?.name, user?.sub, handleProfile]);
+  }, [user?.name, user?.sub, user?.picture]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
       addProfile();
     }
-  }, [isAuthenticated, addProfile]);
+  }, [isAuthenticated, user, addProfile]);
 
   return (
     <BrowserRouter>

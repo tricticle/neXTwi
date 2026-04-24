@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
@@ -6,14 +6,14 @@ const SearchResults = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState({ profiles: [], tweets: [] });
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     try {
       const response = await axios.get(`/api/search?query=${query}`);
       setResults(response.data);
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [query]);
 
   useEffect(() => {
     if (query.trim() !== "") {

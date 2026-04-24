@@ -342,42 +342,6 @@ const Tweet = () => {
     }
   };
 
-  const fetchTweets = async () => {
-    try {
-      const response = await fetch("/api/tweet", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const tweets = await response.json();
-
-        // Fetch profile information for each tweet
-        const tweetsWithProfile = await Promise.all(
-          tweets.map(async (tweet) => {
-            const profileResponse = await fetch(
-              `/api/profile?id=${tweet.profile_id}`
-            );
-            const profileData = await profileResponse.json();
-            return {
-              ...tweet,
-              avatar: profileData.avatar,
-              username: profileData.username,
-            };
-          })
-        );
-
-        setTweets(tweetsWithProfile);
-      } else {
-        console.error("Failed to fetch tweets");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const postReply = async (tweetId) => {
     try {
       if (!isAuthenticated) {

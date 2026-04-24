@@ -417,17 +417,6 @@ const Profile = ({ profileId }) => {
       console.error("Error:", error);
     }
   }, []);
-          })
-        );
-
-        setTweets(tweetsWithProfile);
-      } else {
-        console.error("Failed to fetch tweets");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
 
   const postReply = async (tweetId) => {
     try {

@@ -365,7 +365,7 @@ const cache_ops = {
   clearAll: () => cache.clear(),
 };
 
-export default {
+const apiService = {
   tweets,
   profiles,
   likes,
@@ -375,3 +375,5 @@ export default {
   search,
   cache: cache_ops,
 };
+
+export default apiService;

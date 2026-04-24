@@ -21,7 +21,7 @@ const SearchResults = () => {
     } else {
       setResults({ profiles: [], tweets: [] });
     }
-  }, [query]);
+  }, [query, handleSearch]);
 
   const showPopup = results.profiles.length > 0 || results.tweets.length > 0;
 

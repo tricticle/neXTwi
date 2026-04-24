@@ -485,7 +485,7 @@ const Tweet = () => {
       addProfile();
       fetchReplies();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, addProfile, fetchReplies]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
@@ -493,13 +493,13 @@ const Tweet = () => {
       fetchBookmarks();
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
-  }, [profileData]);
+  }, [profileData, fetchLikes, fetchBookmarks, fetchFollowStatus, tweets]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
-  }, [tweets]);
+  }, [profileData, tweets, fetchFollowStatus]);
 
   return (
     <div className="container">

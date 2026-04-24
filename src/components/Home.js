@@ -6,11 +6,11 @@ import SearchResults from "./layouts/SearchResults";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import api from "../services/api";
-import { ErrorMessage, SuccessMessage } from "./LoadingSpinner";
+import { ErrorMessage } from "./LoadingSpinner";
 
 const Home = () => {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
-  const { profile, loading: authLoading, error: authError } = useAuth();
+  const { profile } = useAuth();
   
   const [tweetText, setTweetText] = useState("");
   const [hashtags, setHashtags] = useState("");

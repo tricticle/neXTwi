@@ -137,7 +137,7 @@ const Profile = ({ profileId }) => {
     };
 
     fetchCounts();
-  }, [userId]);
+  }, [userId, fetchFollowerCounts, fetchFollowingCounts]);
 
   useEffect(() => {
     const fetchprof = async () => {
@@ -586,14 +586,14 @@ const Profile = ({ profileId }) => {
 
   useEffect(() => {
     fetchTweets();
-  }, []);
+  }, [fetchTweets]);
 
   useEffect(() => {
     if (isAuthenticated) {
       addProfile();
       fetchReplies();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, addProfile, fetchReplies]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
@@ -601,13 +601,13 @@ const Profile = ({ profileId }) => {
       fetchBookmarks();
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
-  }, [profileData]);
+  }, [profileData, fetchLikes, fetchBookmarks, fetchFollowStatus, tweets]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
-  }, [tweets]);
+  }, [profileData, tweets, fetchFollowStatus]);
 
   return (
     <>

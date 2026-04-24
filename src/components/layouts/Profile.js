@@ -133,7 +133,7 @@ const Profile = ({ profileId }) => {
     };
 
     fetchCounts();
-  }, [profileData]);
+  }, [profileData, fetchFollowerCounts, fetchFollowingCounts]);
 
   const handleLike = async (tweetId) => {
     try {
@@ -475,21 +475,21 @@ const Profile = ({ profileId }) => {
 
   useEffect(() => {
     fetchTweets();
-  }, []);
+  }, [fetchTweets]);
 
   useEffect(() => {
     if (isAuthenticated) {
       addProfile();
       fetchReplies();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, addProfile, fetchReplies]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
       fetchLikes();
       fetchBookmarks();
     }
-  }, [profileData]);
+  }, [profileData, fetchLikes, fetchBookmarks]);
 
   return (
     <>

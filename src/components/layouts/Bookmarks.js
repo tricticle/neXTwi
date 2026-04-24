@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -156,7 +156,7 @@ const Bookmark = ({ profileId }) => {
     }
   };
 
-  const fetchFollowStatus = async (userId) => {
+  const fetchFollowStatus = useCallback(async (userId) => {
     try {
       const response = await fetch(
         `/api/follow?follower_id=${profileData._id}&following_id=${userId}`,
@@ -174,12 +174,11 @@ const Bookmark = ({ profileId }) => {
           ...prevStatus,
           [userId]: follow ? "Following" : "Follow",
         }));
-        return follow ? "Following" : "Follow"; // Return the follow status
+        return follow ? "Following" : "Follow";
       } else if (
         response.status === 404 &&
         response.statusText === "Not Found"
       ) {
-        // Follow relationship not found, assuming not being followed
         setFollowStatus((prevStatus) => ({
           ...prevStatus,
           [userId]: "Follow",
@@ -190,15 +189,15 @@ const Bookmark = ({ profileId }) => {
         return "Follow";
       } else {
         console.error("Failed to fetch follow status");
-        return null; // or handle the error appropriately
+        return null;
       }
     } catch (error) {
       console.error("Error:", error);
-      return null; // or handle the error appropriately
+      return null;
     }
-  };
+  }, [profileData]);
 
-  const fetchLikes = async () => {
+  const fetchLikes = useCallback(async () => {
     try {
       if (profileData) {
         const response = await fetch(`/api/like?user_id=${profileData._id}`, {
@@ -221,9 +220,9 @@ const Bookmark = ({ profileId }) => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [profileData]);
 
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = useCallback(async () => {
     try {
       if (profileData) {
         const response = await fetch(
@@ -249,26 +248,13 @@ const Bookmark = ({ profileId }) => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [profileData]);
 
   const toggleOptions = (tweetId) => {
     setShowOptions((prevTweetId) => (prevTweetId === tweetId ? null : tweetId));
   };
 
-  const handleProfile = async () => {
-    try {
-      const response = await axios.post("/api/profile", {
-        username: user.name,
-        avatar: user.picture, // Include the avatar from Auth0
-      });
-      console.log(response.data.message);
-      await addProfile();
-    } catch (error) {
-      console.error("Error creating profile:", error);
-    }
-  };
-
-  const addProfile = async () => {
+  const addProfile = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/profile?username=${user.name || user.sub}`,
@@ -281,26 +267,23 @@ const Bookmark = ({ profileId }) => {
       );
 
       if (response.ok) {
-        const profileData = await response.json();
+        const data = await response.json();
 
-        if (profileData.username === user.name) {
-          setProfileData(profileData);
-          console.log("Profile ID:", profileData._id);
+        if (data.username === user.name) {
+          setProfileData(data);
+          console.log("Profile ID:", data._id);
           console.log("Profile added successfully");
         } else {
           console.error("Profile username does not match Auth0 user name");
         }
       } else {
         console.error("Failed to add profile");
-        // Throw an error to trigger the catch block
         throw new Error("Failed to add profile");
       }
     } catch (error) {
       console.error("Error:", error);
-      // If an error occurs, run handleProfile
-      await handleProfile();
     }
-  };
+  }, [user?.name, user?.sub]);
 
   const handleDeleteTweet = async (tweetId) => {
     try {
@@ -338,7 +321,7 @@ const Bookmark = ({ profileId }) => {
     }
   };
 
-  const fetchTweets = async () => {
+  const fetchTweets = useCallback(async () => {
     try {
       const response = await fetch(`/api/tweet?profileId=${profileId}`, {
         method: "GET",
@@ -372,7 +355,7 @@ const Bookmark = ({ profileId }) => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [profileId]);
 
   const postReply = async (tweetId) => {
     try {

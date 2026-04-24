@@ -254,19 +254,6 @@ const Like = ({ profileId }) => {
     setShowOptions((prevTweetId) => (prevTweetId === tweetId ? null : tweetId));
   };
 
-  const handleProfile = async () => {
-    try {
-      const response = await axios.post("/api/profile", {
-        username: user.name,
-        avatar: user.picture, // Include the avatar from Auth0
-      });
-      console.log(response.data.message);
-      await addProfile();
-    } catch (error) {
-      console.error("Error creating profile:", error);
-    }
-  };
-
   const addProfile = useCallback(async () => {
     try {
       const response = await fetch(

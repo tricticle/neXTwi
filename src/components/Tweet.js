@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -166,7 +166,7 @@ const Tweet = () => {
     }
   };
 
-  const fetchFollowStatus = async (userId) => {
+  const fetchFollowStatus = useCallback(async (userId) => {
     try {
       const response = await fetch(
         `/api/follow?follower_id=${profileData._id}&following_id=${userId}`,
@@ -206,9 +206,9 @@ const Tweet = () => {
       console.error("Error:", error);
       return null; // or handle the error appropriately
     }
-  };
+  }, [profileData]);
 
-  const fetchLikes = async () => {
+  const fetchLikes = useCallback(async () => {
     try {
       if (profileData) {
         const response = await fetch(`/api/like?user_id=${profileData._id}`, {
@@ -231,9 +231,9 @@ const Tweet = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [profileData]);
 
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = useCallback(async () => {
     try {
       if (profileData) {
         const response = await fetch(
@@ -259,26 +259,13 @@ const Tweet = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [profileData]);
 
   const toggleOptions = (tweetId) => {
     setShowOptions((prevTweetId) => (prevTweetId === tweetId ? null : tweetId));
   };
 
-  const handleProfile = async () => {
-    try {
-      const response = await axios.post("/api/profile", {
-        username: user.name,
-        avatar: user.picture, // Include the avatar from Auth0
-      });
-      console.log(response.data.message);
-      await addProfile();
-    } catch (error) {
-      console.error("Error creating profile:", error);
-    }
-  };
-
-  const addProfile = async () => {
+  const addProfile = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/profile?username=${user.name || user.sub}`,
@@ -316,10 +303,8 @@ const Tweet = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      // If an error occurs, run handleProfile
-      await handleProfile();
     }
-  };
+  }, [user?.name, user?.sub]);
 
   const handleDeleteTweet = async (tweetId) => {
     try {
@@ -351,42 +336,6 @@ const Tweet = () => {
         fetchTweets();
       } else {
         console.error("Failed to delete tweet");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const fetchTweets = async () => {
-    try {
-      const response = await fetch("/api/tweet", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const tweets = await response.json();
-
-        // Fetch profile information for each tweet
-        const tweetsWithProfile = await Promise.all(
-          tweets.map(async (tweet) => {
-            const profileResponse = await fetch(
-              `/api/profile?id=${tweet.profile_id}`
-            );
-            const profileData = await profileResponse.json();
-            return {
-              ...tweet,
-              avatar: profileData.avatar,
-              username: profileData.username,
-            };
-          })
-        );
-
-        setTweets(tweetsWithProfile);
-      } else {
-        console.error("Failed to fetch tweets");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -432,7 +381,43 @@ const Tweet = () => {
     }
   };
 
-  const fetchReplies = async () => {
+  const fetchTweets = useCallback(async () => {
+    try {
+      const response = await fetch("/api/tweet", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const tweets = await response.json();
+
+        // Fetch profile information for each tweet's author
+        const tweetsWithProfile = await Promise.all(
+          tweets.map(async (tweet) => {
+            const profileResponse = await fetch(
+              `/api/profile?id=${tweet.profile_id}`
+            );
+            const profileData = await profileResponse.json();
+            return {
+              ...tweet,
+              avatar: profileData.avatar,
+              username: profileData.username,
+            };
+          })
+        );
+
+        setTweets(tweetsWithProfile);
+      } else {
+        console.error("Failed to fetch tweets");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, []);
+
+  const fetchReplies = useCallback(async () => {
     try {
       const response = await fetch("/api/reply", {
         method: "GET",
@@ -466,11 +451,11 @@ const Tweet = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTweets();
-  }, []);
+  }, [fetchTweets]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -478,14 +463,14 @@ const Tweet = () => {
       fetchReplies();
     }, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchTweets, fetchReplies]);
 
   useEffect(() => {
     if (isAuthenticated) {
       addProfile();
       fetchReplies();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, addProfile, fetchReplies]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
@@ -493,13 +478,13 @@ const Tweet = () => {
       fetchBookmarks();
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
-  }, [profileData]);
+  }, [profileData, fetchLikes, fetchBookmarks, fetchFollowStatus, tweets]);
 
   useEffect(() => {
     if (profileData && profileData._id) {
       tweets.forEach((tweet) => fetchFollowStatus(tweet.profile_id));
     }
-  }, [tweets]);
+  }, [profileData, tweets, fetchFollowStatus]);
 
   return (
     <div className="container">

@@ -1,96 +1,143 @@
 // api/profile.js
 const mongoose = require('mongoose');
+const connectDB = require('./db-connection');
 const { Profile, Tweet, Reply, Follow } = require('./database');
-const axios = require('axios');
-
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const { sendSuccess, sendError } = require('./utils/response-handler');
+const { validateUsername, validatePagination } = require('./utils/validators');
 
 module.exports = async (req, res) => {
   try {
+    await connectDB();
+
     if (req.method === 'POST') {
       const { username, avatar } = req.body;
 
-      // Input validation (optional but recommended)
-      if (!username) {
-        return res.status(400).json({ error: 'Missing required field: username' });
+      // Validate username
+      const validation = validateUsername(username);
+      if (!validation.valid) {
+        return sendError(res, validation.error, 400, 'INVALID_USERNAME');
       }
 
-      // Find the profile or create a new one
+      // Find or create profile
       let profile = await Profile.findOne({ username });
       if (!profile) {
         profile = new Profile({
           _id: new mongoose.Types.UUID(),
           updated_at: new Date(),
           username,
+          avatar,
         });
-      }
-
-      // Update avatar only if a new URL is provided
-      if (avatar) {
+      } else if (avatar) {
+        // Update avatar if provided
         profile.avatar = avatar;
-        await profile.save();
+        profile.updated_at = new Date();
       }
 
-      res.status(201).json({ message: 'Profile added/updated successfully', profile });
-    } else if (req.method === 'GET') {
-      if (req.query.id || req.query.username) {
-        const query = req.query.id ? { _id: req.query.id } : { username: req.query.username };
-        const userProfile = await Profile.findOne(query, '-__v').lean();
+      await profile.save();
 
-        if (userProfile) {
-          res.json({
-            _id: userProfile._id.toString(),
-            username: userProfile.username,
-            avatar: userProfile.avatar,
-          });
-        } else {
-          res.status(404).json({ error: 'Profile not found' });
-        }
-      } else {
-        // Fetch all profiles
-        const profiles = await Profile.find({}, '-__v').lean();
-        res.json(profiles.map(profile => ({
+      return sendSuccess(
+        res,
+        {
           _id: profile._id.toString(),
           username: profile.username,
           avatar: profile.avatar,
-        })));
+          updated_at: profile.updated_at,
+        },
+        201,
+        'Profile created/updated successfully'
+      );
+    } else if (req.method === 'GET') {
+      if (req.query.id || req.query.username) {
+        const query = req.query.id 
+          ? { _id: req.query.id } 
+          : { username: req.query.username };
+        
+        const userProfile = await Profile.findOne(query).select('-__v').lean();
+
+        if (!userProfile) {
+          return sendError(res, 'Profile not found', 404, 'NOT_FOUND');
+        }
+
+        return sendSuccess(res, {
+          _id: userProfile._id.toString(),
+          username: userProfile.username,
+          avatar: userProfile.avatar,
+          updated_at: userProfile.updated_at,
+        });
+      } else {
+        // Fetch paginated profiles
+        const { page = 1, limit = 20 } = req.query;
+        const paginationValidation = validatePagination(page, limit);
+        
+        if (!paginationValidation.valid) {
+          return sendError(res, paginationValidation.error, 400, 'INVALID_PAGINATION');
+        }
+
+        const { page: pageNum, limit: limitNum } = paginationValidation;
+        const skip = (pageNum - 1) * limitNum;
+
+        const [profiles, totalCount] = await Promise.all([
+          Profile.find()
+            .select('-__v')
+            .skip(skip)
+            .limit(limitNum)
+            .lean(),
+          Profile.countDocuments(),
+        ]);
+
+        return sendSuccess(res, {
+          profiles: profiles.map(p => ({
+            _id: p._id.toString(),
+            username: p.username,
+            avatar: p.avatar,
+            updated_at: p.updated_at,
+          })),
+          pagination: {
+            page: pageNum,
+            limit: limitNum,
+            total: totalCount,
+            pages: Math.ceil(totalCount / limitNum),
+          },
+        });
       }
     } else if (req.method === 'DELETE') {
-      if (req.query.id) {
-        const userId = req.query.id;
-        const deletedTweets = await Tweet.deleteMany({ profile_id: new mongoose.Types.UUID(userId) });
-        const deletedReply = await Reply.deleteMany({ user_id: new mongoose.Types.UUID(userId) });
-        const deletedFollows = await Follow.deleteMany({
-          $or: [{ follower_id: userId }, { following_id: userId }],
-        });
-        const deletedProfile = await Profile.findByIdAndDelete(userId);
-
-        if (deletedProfile) {
-          res.json({
-            message: "Profile deleted successfully",
-            deletedProfile: {
-              _id: deletedProfile._id.toString(),
-              username: deletedProfile.username,
-              avatar: deletedProfile.avatar,
-            },
-            deletedTweets: deletedTweets.deletedCount,
-            deletedReply: deletedReply.deletedCount,
-            deletedFollows: deletedFollows.deletedCount,
-          });
-        } else {
-          res.status(404).json({ error: 'Profile not found' });
-        }
-      } else {
-        res.status(400).json({ error: 'User ID is required for profile deletion' });
+      if (!req.query.id) {
+        return sendError(res, 'User ID is required for deletion', 400, 'MISSING_USER_ID');
       }
+
+      const userId = new mongoose.Types.UUID(req.query.id);
+
+      // Delete cascading data in parallel
+      const [deletedTweets, deletedReplies, deletedFollows, deletedProfile] = await Promise.all([
+        Tweet.deleteMany({ profile_id: userId }),
+        Reply.deleteMany({ user_id: userId }),
+        Follow.deleteMany({
+          $or: [{ follower_id: userId }, { following_id: userId }],
+        }),
+        Profile.findByIdAndDelete(userId),
+      ]);
+
+      if (!deletedProfile) {
+        return sendError(res, 'Profile not found', 404, 'NOT_FOUND');
+      }
+
+      return sendSuccess(res, {
+        message: 'Profile deleted successfully',
+        deletedProfile: {
+          _id: deletedProfile._id.toString(),
+          username: deletedProfile.username,
+        },
+        deletedCounts: {
+          tweets: deletedTweets.deletedCount,
+          replies: deletedReplies.deletedCount,
+          follows: deletedFollows.deletedCount,
+        },
+      });
     } else {
-      res.status(400).json({ error: 'Invalid request method' });
+      return sendError(res, 'Invalid request method', 400, 'INVALID_METHOD');
     }
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Profile API error:', error);
+    return sendError(res, 'Internal server error', 500, 'INTERNAL_ERROR');
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -15,20 +15,7 @@ function App() {
   const { isAuthenticated, user } = useAuth0();
   const [profileData, setProfileData] = useState(null);
 
-  const handleProfile = async () => {
-    try {
-      const response = await axios.post("/api/profile", {
-        username: user.name,
-        avatar: user.picture, // Include the avatar from Auth0
-      });
-      console.log(response.data.message);
-      await addProfile();
-    } catch (error) {
-      console.error("Error creating profile:", error);
-    }
-  };
-
-  const addProfile = async () => {
+  const addProfile = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/profile?username=${user.name || user.sub}`,
@@ -41,11 +28,11 @@ function App() {
       );
 
       if (response.ok) {
-        const profileData = await response.json();
+        const data = await response.json();
 
-        if (profileData.username === user.name) {
-          setProfileData(profileData);
-          console.log("Profile ID:", profileData._id);
+        if (data.username === user.name) {
+          setProfileData(data);
+          console.log("Profile ID:", data._id);
           console.log("Profile added successfully");
         } else {
           console.error("Profile username does not match Auth0 user name");
@@ -56,15 +43,24 @@ function App() {
       }
     } catch (error) {
       console.error("Error:", error);
-      await handleProfile();
+      try {
+        const response = await axios.post("/api/profile", {
+          username: user.name,
+          avatar: user.picture,
+        });
+        console.log(response.data.message);
+        await addProfile();
+      } catch (err) {
+        console.error("Error creating profile:", err);
+      }
     }
-  };
+  }, [user?.name, user?.sub, user?.picture]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
       addProfile();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, addProfile]);
 
   return (
     <BrowserRouter>

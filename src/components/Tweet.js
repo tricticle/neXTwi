@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import TweetPost from "./TweetPost";
 import { ToastContainer, toast } from "react-toastify";

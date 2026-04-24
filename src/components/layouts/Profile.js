@@ -457,42 +457,6 @@ const Profile = ({ profileId }) => {
     }
   };
 
-  const fetchReplies = async () => {
-    try {
-      const response = await fetch("/api/reply", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const replies = await response.json();
-
-        // Fetch profile information for each reply
-        const repliesWithProfile = await Promise.all(
-          replies.map(async (reply) => {
-            const profileResponse = await fetch(
-              `/api/profile?id=${reply.user_id}`
-            );
-            const profileData = await profileResponse.json();
-            return {
-              ...reply,
-              avatar: profileData.avatar,
-              username: profileData.username,
-            };
-          })
-        );
-
-        setRepliesTweets(repliesWithProfile);
-      } else {
-        console.error("Failed to fetch replies");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   useEffect(() => {
     fetchTweets();
   }, [fetchTweets]);

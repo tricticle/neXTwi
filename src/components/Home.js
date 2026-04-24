@@ -1,177 +1,150 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import SideNav from "./layouts/SideNav";
 import { toast } from "react-toastify";
 import SearchResults from "./layouts/SearchResults";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import api from "../services/api";
+import { ErrorMessage, SuccessMessage } from "./LoadingSpinner";
 
 const Home = () => {
-  const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
-  const [profileData, setProfileData] = useState(null);
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { profile, loading: authLoading, error: authError } = useAuth();
+  
   const [tweetText, setTweetText] = useState("");
   const [hashtags, setHashtags] = useState("");
   const [useLocation, setUseLocation] = useState(false);
   const [isTweetPostVisible, setIsTweetPostVisible] = useState(false);
+  const [isPostingTweet, setIsPostingTweet] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleTweetButtonClick = () => {
+  const handleTweetButtonClick = useCallback(() => {
     if (!isAuthenticated) {
       loginWithRedirect();
       return;
     }
-    setIsTweetPostVisible(!isTweetPostVisible);
-  };
+    setIsTweetPostVisible(prev => !prev);
+  }, [isAuthenticated, loginWithRedirect]);
 
-  const handleSubscribeClick = () => {
-    alert("feature coming soon!");
-  };
+  const handleSubscribeClick = useCallback(() => {
+    toast.info("Feature coming soon!", {
+      position: "top-right",
+      autoClose: 3000,
+    });
+  }, []);
 
-  const handleProfile = async () => {
-    try {
-      const response = await axios.post("/api/profile", {
-        username: user.name,
-        avatar: user.picture, // Include the avatar from Auth0
-      });
-      console.log(response.data.message);
-      await addProfile();
-    } catch (error) {
-      console.error("Error creating profile:", error);
+  const postTweet = useCallback(async () => {
+    if (!profile) {
+      setError("Profile not loaded");
+      return;
     }
-  };
 
-  const addProfile = async () => {
     try {
-      const response = await fetch(
-        `/api/profile?username=${user.name || user.sub}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      setError(null);
+      setIsPostingTweet(true);
+
+      // Get location if enabled
+      let location = null;
+      if (useLocation && navigator.geolocation) {
+        location = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              resolve({
+                type: "Point",
+                coordinates: [position.coords.longitude, position.coords.latitude],
+              });
+            },
+            reject
+          );
+        });
+      }
+
+      // Parse hashtags
+      const parsedHashtags = hashtags
+        .split(/[\s,]+/)
+        .filter(tag => tag.trim() !== "");
+
+      // Create tweet
+      const response = await api.tweets.create(
+        tweetText,
+        profile._id,
+        parsedHashtags,
+        location
       );
 
-      if (response.ok) {
-        const profileData = await response.json();
-
-        if (profileData.username === user.name) {
-          setProfileData(profileData);
-          console.log("Profile ID:", profileData._id);
-          console.log("Profile added successfully");
-        } else {
-          console.error("Profile username does not match Auth0 user name");
-        }
-      } else {
-        console.error("Failed to add profile");
-        // Throw an error to trigger the catch block
-        throw new Error("Failed to add profile");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      // If an error occurs, run handleProfile
-      await handleProfile();
-    }
-  };
-
-  const postTweet = async () => {
-    try {
-      if (!isAuthenticated) {
-        loginWithRedirect();
-        return;
-      }
-      // Use navigator.geolocation to get the user's current location
-      let location = null;
-      if (navigator.geolocation && useLocation) {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-
-        location = {
-          type: "Point",
-          coordinates: [position.coords.longitude, position.coords.latitude],
-        };
-      }
-
-      const response = await fetch("/api/tweet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: tweetText,
-          profile_id: profileData._id,
-          hashtags: hashtags.split(/[\s,]+/).filter((tag) => tag !== ""), // Extract hashtags from input
-          location, // Include the user's location if available
-        }),
-      });
-
-      if (response.ok) {
-        console.log("Tweet posted successfully");
-        toast.success("Tweet posted successfully", {
+      if (response.data) {
+        toast.success("Tweet posted successfully!", {
           position: "top-right",
           autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
         });
         setTweetText("");
         setHashtags("");
-      } else {
-        const data = await response.json();
-        if (
-          response.status === 400 &&
-          data.error === "Tweet contains blocked words"
-        ) {
-          alert(`Tweet contains blocked word: ${data.blockedWord}`);
-        } else {
-          console.error("Failed to post tweet");
-        }
+        setUseLocation(false);
+        setIsTweetPostVisible(false);
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (err) {
+      const errorMsg = err.message || "Failed to post tweet";
+      setError(errorMsg);
+      toast.error(errorMsg, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setIsPostingTweet(false);
     }
-  };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      addProfile();
-    }
-  }, [isAuthenticated, user]);
+  }, [profile, useLocation, tweetText, hashtags]);
 
   return (
     <div className="container">
       <SideNav
-        profileId={profileData ? profileData._id : null}
+        profileId={profile?._id}
         onTweetButtonClick={handleTweetButtonClick}
         onSomeClick={handleSubscribeClick}
       />
       <div className="post-section">
-        <Outlet />
+        <Outlet context={{ profile }} />
         <div className="tps">
+          {error && (
+            <ErrorMessage 
+              message={error} 
+              onDismiss={() => setError(null)}
+            />
+          )}
           {isTweetPostVisible && (
             <div className="tweet-post">
               <textarea
                 placeholder="What's happening?"
                 value={tweetText}
                 onChange={(e) => setTweetText(e.target.value)}
+                disabled={isPostingTweet}
+                maxLength={280}
               />
+              <div className="tweet-char-count">
+                {tweetText.length}/280
+              </div>
               <input
                 type="text"
-                placeholder="Add hashtags"
+                placeholder="Add hashtags (comma or space separated)"
                 value={hashtags}
                 onChange={(e) => setHashtags(e.target.value)}
+                disabled={isPostingTweet}
               />
               <div className="location">
                 <input
                   type="checkbox"
                   checked={useLocation}
                   onChange={() => setUseLocation(!useLocation)}
+                  disabled={isPostingTweet}
                 />
-                location
+                <label>Use my location</label>
               </div>
-              <button onClick={postTweet}>Tweet</button>
+              <button 
+                onClick={postTweet} 
+                disabled={isPostingTweet || !tweetText.trim()}
+              >
+                {isPostingTweet ? "Posting..." : "Tweet"}
+              </button>
             </div>
           )}
         </div>
@@ -193,13 +166,9 @@ const Home = () => {
         <div className="widgets__widgetContainer">
           <h2>What's happening?</h2>
           <p>
-            This part handles the addition of a new profile when the HTTP method
-            is a POST request. If you're looking for an alternative way to add
-            data, you might consider making slight modifications based on your
-            specific requirements. If you have a different data structure or
-            need additional functionality, please provide more details about the
-            specific changes or features you're looking for, and I'll be happy
-            to help you modify the code accordingly.
+            Stay updated with the latest tweets, trending topics, and interactions
+            from accounts you follow. Join the conversation and share your thoughts
+            with the community.
           </p>
         </div>
       </div>

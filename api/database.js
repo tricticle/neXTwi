@@ -8,6 +8,9 @@ const profileSchema = new mongoose.Schema({
     avatar: { type: String },
   });
 
+  // Add indexes for Profile
+  profileSchema.index({ username: 1 });
+
   const Profile = mongoose.model('Profile', profileSchema);
 
   const tweetSchema = new mongoose.Schema({
@@ -31,6 +34,12 @@ const profileSchema = new mongoose.Schema({
     },
   });
   
+  // Add indexes for Tweet
+  tweetSchema.index({ profile_id: 1 });
+  tweetSchema.index({ created_at: -1 });
+  tweetSchema.index({ hashtags: 1 });
+  tweetSchema.index({ text: 'text' }); // Text index for search
+  
   const Tweet = mongoose.model('Tweet', tweetSchema);
 
   const bookmarkSchema = new mongoose.Schema({
@@ -40,6 +49,9 @@ const profileSchema = new mongoose.Schema({
     created_at: { type: Date, required: true },
   });
   
+  // Add indexes for Bookmark
+  bookmarkSchema.index({ user_id: 1, tweet_id: 1 }, { unique: true });
+
   const Bookmark = mongoose.model('Bookmark', bookmarkSchema);
 
   const hashtagSchema = new mongoose.Schema({
@@ -47,6 +59,9 @@ const profileSchema = new mongoose.Schema({
     name: { type: String, required: true },
   });
   
+  // Add indexes for Hashtag
+  hashtagSchema.index({ name: 1 });
+
   const Hashtag = mongoose.model('Hashtag', hashtagSchema);
 
   const likeSchema = new mongoose.Schema({
@@ -56,11 +71,18 @@ const profileSchema = new mongoose.Schema({
     created_at: { type: Date, required: true },
   });
 
+  // Add indexes for Like
+  likeSchema.index({ user_id: 1, tweet_id: 1 }, { unique: true });
+  likeSchema.index({ tweet_id: 1 });
+
   const tweetHashtagSchema = new mongoose.Schema({
     tweet_id: { type: mongoose.Schema.Types.UUID, required: true },
     hashtag_id: { type: mongoose.Schema.Types.UUID, required: true },
   });
   
+  // Add indexes for TweetHashtag
+  tweetHashtagSchema.index({ tweet_id: 1, hashtag_id: 1 }, { unique: true });
+
   const TweetHashtag = mongoose.model('TweetHashtag', tweetHashtagSchema);
 
   
@@ -74,6 +96,11 @@ const profileSchema = new mongoose.Schema({
     reply_id: { type: mongoose.Schema.Types.UUID },
   });
   
+  // Add indexes for Reply
+  replySchema.index({ tweet_id: 1 });
+  replySchema.index({ user_id: 1 });
+  replySchema.index({ reply_id: 1 });
+
   const Reply = mongoose.model('Reply', replySchema);
 
   const followSchema = new mongoose.Schema({
@@ -84,6 +111,11 @@ const profileSchema = new mongoose.Schema({
     following_username: { type: String, required: true },
     created_at: { type: Date, required: true },
   });
+
+  // Add indexes for Follow
+  followSchema.index({ follower_id: 1, following_id: 1 }, { unique: true });
+  followSchema.index({ following_id: 1 });
+  followSchema.index({ follower_id: 1 });
 
   const Follow = mongoose.model('Follow', followSchema);
   

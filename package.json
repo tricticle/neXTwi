@@ -9,7 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.7",
     "dotenv": "^16.4.1",
-    "express": "^4.18.2",
+    "express": "^4.22.2",
     "mongoose": "^8.1.1",
     "opencage-api-client": "^1.0.4",
     "react": "^18.2.0",
